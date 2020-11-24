@@ -61,7 +61,7 @@ jobs:
     branchPatchCount: $[counter(variables['branchMajorMinor'], 0)]
   steps:
     - bash: |
-        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-$(Build.SourceBranch)-$(branchPatchCount)"
+        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-$(Build.BuildId)-$(branchPatchCount)"
       name: IfBranchBuildNameAndPatch
 
 - job: Build_Fix_Management_Data_Contracts
