@@ -1,0 +1,129 @@
+trigger:
+  branches:
+      include:
+        - development
+
+variables:
+
+  # Solution Variables
+  buildPlatform: 'x64'
+  buildProjects: '**/Fix.Management*.csproj'
+  publishDataContractsLibraries: '**\Fix.Management.DataContracts.csproj'
+  buildConfiguration: 'Release'
+
+  # Version Handling Variables
+  majorProductVersion: 1   
+  minorProductVersion: 0    
+  majorMinorProductVersion: $(majorProductVersion).$(minorProductVersion).0
+  patchProductVersion: $[counter(variables['majorMinorProductVersion'], 0)]
+  buildProductVersion: 0
+  
+  # Artifact Drop Folder
+  artifactName: 'drop'
+
+# Set Build Name
+name: $(majorProductVersion).$(minorProductVersion).$(patchProductVersion).$(buildProductVersion)
+
+jobs:
+# master branch versioning
+- job: Build_Master_Version_Number
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  variables:
+    masterMajorMinor: $(majorProductVersion).$(minorProductVersion)
+    masterPatchCount: $[counter(variables['masterMajorMinor'], 0)]
+  steps:
+    - bash: |
+        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).$(masterPatchCount)"
+      name: IfMasterSetBuildNameAndPatch
+
+# development branch versioning
+- job: Build_Development_Version_Number
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/development')
+  variables:
+    developmentMajorMinor: $(majorProductVersion).$(minorProductVersion)-beta
+    developmentPatchCount: $[counter(variables['developmentMajorMinor'], 0)]
+  steps:
+    - bash: |
+        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).$(developmentPatchCount)-beta"
+      name: IfDevelopmentSetBuildNameAndPatch
+
+# PR versioning for master branch & development branch
+- job: Build_PullRequest_Version_Number
+  condition: and(ne(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.SourceBranch'], 'refs/heads/development'), eq(variables['Build.Reason'], 'PullRequest'))
+  variables:
+    pullRequestMajorMinor: $(majorProductVersion).$(minorProductVersion)-alpha$(variables['system.pullrequest.pullrequestid'])
+    pullRequestPatchCount: $[counter(variables['pullRequestMajorMinor'], 0)]
+  steps:
+    - bash: |
+        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-alpha$(system.pullrequest.pullrequestid)-$(pullRequestPatchCount)"
+      name: IfPullRequestBuildNameAndPatch
+
+# Name branch prefix to build version (master branch & development branch)
+- job: Build_Branch_Version_Number
+  condition: and(ne(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.SourceBranch'], 'refs/heads/development'), ne(variables['Build.Reason'], 'PullRequest'))
+  variables:
+    branchMajorMinor: $(majorProductVersion).$(minorProductVersion)-br$(variables['build.sourcebranch'])
+    branchPatchCount: $[counter(variables['branchMajorMinor'], 0)]
+  steps:
+    - bash: |
+        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-$(Build.SourceBranch)-$(branchPatchCount)"
+      name: IfBranchBuildNameAndPatch
+
+- job: BuildingFixManagementDataContracts
+
+pool:
+  vmImage: 'windows-2019'
+  displayName: Run Main Build
+
+  steps:
+
+  # Installer
+  - task: NuGetToolInstaller@0
+    displayName: 'Use NuGet 4.4.1'
+    inputs:
+      versionSpec: 4.4.1
+  
+  # Specify sdk Version
+  - task: UseDotNet@2
+    displayName: 'Use sdk 3.1.102'
+    inputs:
+      packageType: 'sdk'
+      version: '3.1.102'
+  
+  # Restore
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: '$(buildProjects)'
+      includeNuGetOrg: true
+      nobuild: true
+  
+  # Build
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects: '$(buildProjects)'
+      arguments: '--configuration $(buildConfiguration) --no-restore'
+  
+  # Pack
+  - task: DotNetCoreCLI@2
+    displayName: "Pack"
+    inputs:
+      command: 'pack'
+      arguments: '--configuration $(buildConfiguration)'
+      packagesToPack: '$(publishDataContractsLibraries)'
+      nobuild: true
+  
+  # Publish to Feed
+  # allowPackageConflicts allows us to build the same version and not throw an error when trying to push, instead it just ingores the latest package unless the version changes
+  - task: NuGetCommand@2
+    displayName: 'Nuget Push'
+    inputs:
+      command: 'push'
+      feedsToUse: 'select'
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: 'fix-management-feed'
+      versioningScheme: 'off'
+      allowPackageConflicts: true
