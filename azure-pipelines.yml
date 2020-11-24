@@ -2,6 +2,7 @@ trigger:
   branches:
       include:
         - development
+        - master
 
 variables:
 
@@ -69,19 +70,18 @@ jobs:
         echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-$(Build.SourceBranch)-$(branchPatchCount)"
       name: IfBranchBuildNameAndPatch
 
-- job: BuildingFixManagementDataContracts
+- job: Building_Fix_Management_Data_Contracts
 
   pool:
     vmImage: 'windows-2019'
-    displayName: Run Main Build
+    displayName: 'Run Main Build'
 
     steps:
-
     # Installer
-    - task: NuGetToolInstaller@0
+    - task: NuGetToolInstaller@1
       displayName: 'Use NuGet 4.4.1'
       inputs:
-        versionSpec: 4.4.1
+        versionSpec: '4.4.1'
     
     # Specify sdk Version
     - task: UseDotNet@2
