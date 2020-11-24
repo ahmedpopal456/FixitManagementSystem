@@ -132,5 +132,5 @@ jobs:
       packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
       nuGetFeedType: 'internal'
       publishVstsFeed: '08d378fd-be72-4c80-9ce4-1a7c754efb98/ebdae47f-b5a1-46d3-9c6f-f7e55f78ce85'
-      versioningScheme: 'off'
+      versioningScheme: 'byBuildNumber'
       allowPackageConflicts: true
