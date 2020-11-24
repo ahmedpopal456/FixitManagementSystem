@@ -14,10 +14,7 @@ variables:
 
   # Version Handling Variables
   majorProductVersion: 1   
-  minorProductVersion: 0    
-  majorMinorProductVersion: $(majorProductVersion).$(minorProductVersion).0
-  patchProductVersion: $[counter(variables['majorMinorProductVersion'], 0)]
-  buildProductVersion: 0
+  minorProductVersion: 0
   
   # Artifact Drop Folder
   artifactName: 'drop'
@@ -75,10 +72,6 @@ jobs:
       - Build_Master_Version_Number
   condition: or(succeeded('Build_Branch_Version_Number'), succeeded('Build_PullRequest_Version_Number'), succeeded('Build_Development_Version_Number'), succeeded('Build_Master_Version_Number'))
 
-  variables:
-    # Set Build Name
-    name: $(Build.BuildNumber)
-
   pool:
     vmImage: 'windows-2019'
     displayName: 'Run Main Build'
@@ -134,5 +127,6 @@ jobs:
       packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
       nuGetFeedType: 'internal'
       publishVstsFeed: '08d378fd-be72-4c80-9ce4-1a7c754efb98/ebdae47f-b5a1-46d3-9c6f-f7e55f78ce85'
-      versioningScheme: 'byBuildNumber'
+      versioningScheme: 'byEnvVar'
+      versionEnvVar: BUILD.BUILDNUMBER
       allowPackageConflicts: true
