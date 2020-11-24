@@ -71,59 +71,59 @@ jobs:
 
 - job: BuildingFixManagementDataContracts
 
-pool:
-  vmImage: 'windows-2019'
-  displayName: Run Main Build
+  pool:
+    vmImage: 'windows-2019'
+    displayName: Run Main Build
 
-  steps:
+    steps:
 
-  # Installer
-  - task: NuGetToolInstaller@0
-    displayName: 'Use NuGet 4.4.1'
-    inputs:
-      versionSpec: 4.4.1
-  
-  # Specify sdk Version
-  - task: UseDotNet@2
-    displayName: 'Use sdk 3.1.102'
-    inputs:
-      packageType: 'sdk'
-      version: '3.1.102'
-  
-  # Restore
-  - task: DotNetCoreCLI@2
-    displayName: Restore
-    inputs:
-      command: restore
-      projects: '$(buildProjects)'
-      includeNuGetOrg: true
-      nobuild: true
-  
-  # Build
-  - task: DotNetCoreCLI@2
-    displayName: Build
-    inputs:
-      projects: '$(buildProjects)'
-      arguments: '--configuration $(buildConfiguration) --no-restore'
-  
-  # Pack
-  - task: DotNetCoreCLI@2
-    displayName: "Pack"
-    inputs:
-      command: 'pack'
-      arguments: '--configuration $(buildConfiguration)'
-      packagesToPack: '$(publishDataContractsLibraries)'
-      nobuild: true
-  
-  # Publish to Feed
-  # allowPackageConflicts allows us to build the same version and not throw an error when trying to push, instead it just ingores the latest package unless the version changes
-  - task: NuGetCommand@2
-    displayName: 'Nuget Push'
-    inputs:
-      command: 'push'
-      feedsToUse: 'select'
-      packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-      nuGetFeedType: 'internal'
-      publishVstsFeed: 'fix-management-feed'
-      versioningScheme: 'off'
-      allowPackageConflicts: true
+    # Installer
+    - task: NuGetToolInstaller@0
+      displayName: 'Use NuGet 4.4.1'
+      inputs:
+        versionSpec: 4.4.1
+    
+    # Specify sdk Version
+    - task: UseDotNet@2
+      displayName: 'Use sdk 3.1.102'
+      inputs:
+        packageType: 'sdk'
+        version: '3.1.102'
+    
+    # Restore
+    - task: DotNetCoreCLI@2
+      displayName: Restore
+      inputs:
+        command: restore
+        projects: '$(buildProjects)'
+        includeNuGetOrg: true
+        nobuild: true
+    
+    # Build
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        projects: '$(buildProjects)'
+        arguments: '--configuration $(buildConfiguration) --no-restore'
+    
+    # Pack
+    - task: DotNetCoreCLI@2
+      displayName: "Pack"
+      inputs:
+        command: 'pack'
+        arguments: '--configuration $(buildConfiguration)'
+        packagesToPack: '$(publishDataContractsLibraries)'
+        nobuild: true
+    
+    # Publish to Feed
+    # allowPackageConflicts allows us to build the same version and not throw an error when trying to push, instead it just ingores the latest package unless the version changes
+    - task: NuGetCommand@2
+      displayName: 'Nuget Push'
+      inputs:
+        command: 'push'
+        feedsToUse: 'select'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'fix-management-feed'
+        versioningScheme: 'off'
+        allowPackageConflicts: true
