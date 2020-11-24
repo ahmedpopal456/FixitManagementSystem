@@ -61,7 +61,7 @@ jobs:
     branchPatchCount: $[counter(variables['branchMajorMinor'], 0)]
   steps:
     - bash: |
-        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-$(system.pullrequest.pullrequestid)-$(branchPatchCount)"
+        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-$(Build.SourceBranch)-$(branchPatchCount)"
       name: IfBranchBuildNameAndPatch
 
 - job: Build_Fix_Management_Data_Contracts
@@ -111,9 +111,13 @@ jobs:
     displayName: "Pack"
     inputs:
       command: 'pack'
+      feedsToUse: 'select'
       arguments: '--configuration $(buildConfiguration)'
       packagesToPack: '$(publishDataContractsLibraries)'
-      nobuild: true
+      vstsFeed: '08d378fd-be72-4c80-9ce4-1a7c754efb98/ebdae47f-b5a1-46d3-9c6f-f7e55f78ce85'
+      versioningScheme: 'byEnvVar'
+      versionEnvVar: BUILD.BUILDNUMBER
+
   
   # Publish to Feed
   # allowPackageConflicts allows us to build the same version and not throw an error when trying to push, instead it just ingores the latest package unless the version changes
@@ -130,3 +134,17 @@ jobs:
       versioningScheme: 'byEnvVar'
       versionEnvVar: BUILD.BUILDNUMBER
       allowPackageConflicts: true
+  
+  # Publish PDBs
+  - task: PublishSymbols@2
+    displayName: 'Publish symbols path'
+    inputs:
+      SearchPattern: '*\bin**.pdb'
+      PublishSymbols: false
+    continueOnError: true
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
+      ArtifactName: 'drop'
