@@ -22,9 +22,6 @@ variables:
   # Artifact Drop Folder
   artifactName: 'drop'
 
-# Set Build Name
-name: $(majorProductVersion).$(minorProductVersion).$(patchProductVersion).$(buildProductVersion)
-
 jobs:
 # master branch versioning
 - job: Build_Master_Version_Number
@@ -78,6 +75,10 @@ jobs:
       - Build_Master_Version_Number
   condition: or(succeeded('Build_Branch_Version_Number'), succeeded('Build_PullRequest_Version_Number'), succeeded('Build_Development_Version_Number'), succeeded('Build_Master_Version_Number'))
 
+  variables:
+    # Set Build Name
+    name: $(Build.BuildNumber)
+
   pool:
     vmImage: 'windows-2019'
     displayName: 'Run Main Build'
@@ -124,6 +125,7 @@ jobs:
   # Publish to Feed
   # allowPackageConflicts allows us to build the same version and not throw an error when trying to push, instead it just ingores the latest package unless the version changes
   # publishVstsFeed is fix-management-system Feed
+  # byBuildNumber uses variable 'name'
   - task: NuGetCommand@2
     displayName: 'Nuget Push'
     inputs:
