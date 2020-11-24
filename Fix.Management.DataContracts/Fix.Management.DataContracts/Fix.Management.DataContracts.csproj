@@ -4,4 +4,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Fixes\Responses\" />
+    <Folder Include="Fixes\Requests\" />
+  </ItemGroup>
+
 </Project>
