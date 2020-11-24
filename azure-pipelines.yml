@@ -123,6 +123,7 @@ jobs:
   
   # Publish to Feed
   # allowPackageConflicts allows us to build the same version and not throw an error when trying to push, instead it just ingores the latest package unless the version changes
+  # publishVstsFeed is fix-management-system Feed
   - task: NuGetCommand@2
     displayName: 'Nuget Push'
     inputs:
@@ -130,6 +131,6 @@ jobs:
       feedsToUse: 'select'
       packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
       nuGetFeedType: 'internal'
-      publishVstsFeed: 'fix-management-feed'
+      publishVstsFeed: '08d378fd-be72-4c80-9ce4-1a7c754efb98/ebdae47f-b5a1-46d3-9c6f-f7e55f78ce85'
       versioningScheme: 'off'
       allowPackageConflicts: true
