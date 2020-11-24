@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Fixes\Responses\" />
-    <Folder Include="Fixes\Requests\" />
+	  <CSFile Include="*.cs"/>
   </ItemGroup>
 
 </Project>
