@@ -4,7 +4,11 @@ using System.Text;
 
 namespace Fix.Management.DataContracts.FixPlans.Phases.Enums
 {
-  public enum TaskStatuses
+  public enum PhaseStatuses
   {
+    New,
+    InProgress,
+    InReview,
+    Done
   }
 }
