@@ -43,16 +43,16 @@ namespace Fix.Management.DataContracts.Fixes
     public float SystemCalculatedCost { get; set; }
 
     [DataMember]
-    public FixCostEstimationDto CraftsmanEstimatdCost { get; set; }
+    public FixCostEstimationDto CraftsmanEstimatedCost { get; set; }
 
     [DataMember]
     public long CreatedTimestampUtc { get; set; }
 
     [DataMember]
-    public UserSummaryDto CreatedByUser { get; set; }
+    public UserSummaryDto CreatedByClient { get; set; }
 
     [DataMember]
-    public long UpdatedTimestamp { get; set; }
+    public long UpdatedTimestampUtc { get; set; }
 
     [DataMember]
     public UserSummaryDto UpdatedByUser { get; set; }
@@ -64,12 +64,9 @@ namespace Fix.Management.DataContracts.Fixes
     public Guid ActivityHistoryId { get; set; }
 
     [DataMember]
-    public Guid PlanBillingId { get; set; }
+    public Guid BillingActivityId { get; set; }
 
     [DataMember]
     public FixPlanSummaryDto PlanSummary { get; set; }
-
-    [DataMember]
-    public string ClientId { get; set; }
   }
 }

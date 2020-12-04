@@ -2,7 +2,7 @@
 {
   public enum FixPlanBillingTypes
   {
-    AtPhase,
+    PerPhase,
     AtCompletion,
     Custom
   }

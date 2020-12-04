@@ -21,13 +21,13 @@ namespace Fix.Management.DataContracts.FixPlans
     public long CreatedTimestampUtc { get; set; }
 
     [DataMember]
-    public bool isBookmarked { get; set; }
+    public bool IsBookmarked { get; set; }
 
     [DataMember]
     public FixPlanProposalStates ProposalState { get; set; }
 
     [DataMember]
-    public float FinalCost { get; set; }
+    public float TotalCost { get; set; }
 
     [DataMember]
     public Guid ActivePhaseId { get; set; }
@@ -37,9 +37,6 @@ namespace Fix.Management.DataContracts.FixPlans
 
     [DataMember]
     public IEnumerable<FixPhaseDto> Phases { get; set; }
-
-    [DataMember]
-    public Guid CreatedByCraftsmanId { get; set; }
 
     [DataMember]
     public UserSummaryDto CreatedByCraftsman { get; set; }

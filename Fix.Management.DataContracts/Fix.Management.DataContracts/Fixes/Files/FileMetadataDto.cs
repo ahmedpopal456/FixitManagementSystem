@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Fix.Management.DataContracts.Fixes.Files
 {
+  /// <summary>
+  /// TODO: find more info
+  /// </summary>
   public class FileMetadataDto
   {
     [DataMember]

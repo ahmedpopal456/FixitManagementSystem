@@ -9,6 +9,6 @@ namespace Fix.Management.DataContracts.Fixes.Cost
     public float Cost { get; set; }
 
     [DataMember]
-    public string Comments { get; set; }
+    public string Comment { get; set; }
   }
 }

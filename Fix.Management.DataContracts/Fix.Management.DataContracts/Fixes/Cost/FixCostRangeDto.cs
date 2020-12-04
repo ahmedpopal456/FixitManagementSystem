@@ -6,9 +6,9 @@ namespace Fix.Management.DataContracts.Fixes.Cost
   public class FixCostRangeDto
   {
     [DataMember]
-    public int MaxCost { get; set; }
+    public int MaximumCost { get; set; }
 
     [DataMember]
-    public int MinCost { get; set; }
+    public int MinimumCost { get; set; }
   }
 }
