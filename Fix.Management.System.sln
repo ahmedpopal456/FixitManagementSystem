@@ -13,6 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fix.Management.Triggers.Uni
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fix.Management.DataContracts", "Fix.Management.DataContracts\Fix.Management.DataContracts\Fix.Management.DataContracts.csproj", "{8018D636-F738-4DE4-8E4C-E6EED54C2F7A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0990B33E-5BDD-48B8-9812-64A6FAB0C860}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
