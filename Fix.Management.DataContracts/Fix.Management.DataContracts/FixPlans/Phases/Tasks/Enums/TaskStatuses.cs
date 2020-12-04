@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Fix.Management.DataContracts.FixPlans.Phases.Tasks.Enums
+﻿namespace Fix.Management.DataContracts.FixPlans.Phases.Tasks.Enums
 {
-  public enum PhaseStatuses
+  public enum TaskStatuses
   {
+    New,
+    InProgress,
+    Done
   }
 }

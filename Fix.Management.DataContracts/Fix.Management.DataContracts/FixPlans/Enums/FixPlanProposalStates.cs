@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Fix.Management.DataContracts.FixPlans.Enums
 {
-  public enum FixStatuses
+  public enum FixPlanProposalStates
   {
   }
 }

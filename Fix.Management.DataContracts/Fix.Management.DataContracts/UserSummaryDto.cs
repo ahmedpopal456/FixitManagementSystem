@@ -10,15 +10,12 @@ namespace Fix.Management.DataContracts.Fixes
   [DataContract]
   public class UserSummaryDto
   {
-    [Required]
     [DataMember]
-    public Guid ID { get; set; }
+    public Guid Id { get; set; }
 
-    [Required]
     [DataMember]
     public string FirstName { get; set; }
 
-    [Required]
     [DataMember]
     public string LastName { get; set; }
   }
