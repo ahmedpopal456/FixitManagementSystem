@@ -9,7 +9,8 @@ variables:
   # Solution Variables
   buildPlatform: 'x64'
   buildProjects: '**/Fix.Management*.csproj'
-  publishDataContractsLibraries: '**\Fix.Management.DataContracts.csproj'
+  publishFixManagementServerlessApi: '**/Fix.Management.ServerlessApi.csproj'
+  publishFixManagementTriggers: '**/Fix.Management.Triggers.csproj'
   buildConfiguration: 'Release'
 
   # Version Handling Variables
@@ -19,59 +20,7 @@ variables:
   # Artifact Drop Folder
   artifactName: 'drop'
 
-jobs:
-# master branch versioning
-- job: Build_Master_Version_Number
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-  variables:
-    masterMajorMinor: $(majorProductVersion).$(minorProductVersion)
-    masterPatchCount: $[counter(variables['masterMajorMinor'], 0)]
-  steps:
-    - bash: |
-        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).$(masterPatchCount)"
-      name: IfMasterSetBuildNameAndPatch
-
-# development branch versioning
-- job: Build_Development_Version_Number
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/development')
-  variables:
-    developmentMajorMinor: $(majorProductVersion).$(minorProductVersion)-beta
-    developmentPatchCount: $[counter(variables['developmentMajorMinor'], 0)]
-  steps:
-    - bash: |
-        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).$(developmentPatchCount)-beta"
-      name: IfDevelopmentSetBuildNameAndPatch
-
-# PR versioning for master branch & development branch
-- job: Build_PullRequest_Version_Number
-  condition: and(ne(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.SourceBranch'], 'refs/heads/development'), eq(variables['Build.Reason'], 'PullRequest'))
-  variables:
-    pullRequestMajorMinor: $(majorProductVersion).$(minorProductVersion)-alpha$(variables['system.pullrequest.pullrequestid'])
-    pullRequestPatchCount: $[counter(variables['pullRequestMajorMinor'], 0)]
-  steps:
-    - bash: |
-        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-alpha$(system.pullrequest.pullrequestid)-$(pullRequestPatchCount)"
-      name: IfPullRequestBuildNameAndPatch
-
-# Name branch prefix to build version (master branch & development branch)
-- job: Build_Branch_Version_Number
-  condition: and(ne(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.SourceBranch'], 'refs/heads/development'), ne(variables['Build.Reason'], 'PullRequest'))
-  variables:
-    branchMajorMinor: $(majorProductVersion).$(minorProductVersion)-br$(variables['build.sourcebranch'])
-    branchPatchCount: $[counter(variables['branchMajorMinor'], 0)]
-  steps:
-    - bash: |
-        echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-$(Build.BuildId)-$(branchPatchCount)"
-      name: IfBranchBuildNameAndPatch
-
-- job: Build_Fix_Management_Data_Contracts
-  dependsOn:
-      - Build_Branch_Version_Number
-      - Build_PullRequest_Version_Number
-      - Build_Development_Version_Number
-      - Build_Master_Version_Number
-  condition: or(succeeded('Build_Branch_Version_Number'), succeeded('Build_PullRequest_Version_Number'), succeeded('Build_Development_Version_Number'), succeeded('Build_Master_Version_Number'))
-
+- job: Build_Fix_Management_Projects
   pool:
     vmImage: 'windows-2019'
     displayName: 'Run Main Build'
@@ -106,35 +55,26 @@ jobs:
       projects: '$(buildProjects)'
       arguments: '--configuration $(buildConfiguration) --no-restore'
   
-  # Pack
+  # Publish Fix Management Serverless API
   - task: DotNetCoreCLI@2
-    displayName: "Pack"
+    displayName:  Publish Fix Management Serverless API
     inputs:
-      command: 'pack'
-      feedsToUse: 'select'
-      arguments: '--configuration $(buildConfiguration)'
-      packagesToPack: '$(publishDataContractsLibraries)'
-      vstsFeed: '08d378fd-be72-4c80-9ce4-1a7c754efb98/ebdae47f-b5a1-46d3-9c6f-f7e55f78ce85'
-      versioningScheme: 'byEnvVar'
-      versionEnvVar: BUILD.BUILDNUMBER
+      command: publish
+      publishWebProjects: false
+      projects: '$(publishFixManagementServerlessApi)'
+      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-restore'
+      zipAfterPublish: true
 
-  
-  # Publish to Feed
-  # allowPackageConflicts allows us to build the same version and not throw an error when trying to push, instead it just ingores the latest package unless the version changes
-  # publishVstsFeed is fix-management-system Feed
-  # byBuildNumber uses variable 'name'
-  - task: NuGetCommand@2
-    displayName: 'Nuget Push'
+  # Publish Fix Management Triggers
+  - task: DotNetCoreCLI@2
+    displayName: Publish Fix Management Triggers
     inputs:
-      command: 'push'
-      feedsToUse: 'select'
-      packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-      nuGetFeedType: 'internal'
-      publishVstsFeed: '08d378fd-be72-4c80-9ce4-1a7c754efb98/ebdae47f-b5a1-46d3-9c6f-f7e55f78ce85'
-      versioningScheme: 'byEnvVar'
-      versionEnvVar: BUILD.BUILDNUMBER
-      allowPackageConflicts: true
-  
+      command: publish
+      publishWebProjects: false
+      projects: '$(publishFixManagementTriggers)'
+      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-restore'
+      zipAfterPublish: true
+
   # Publish PDBs
   - task: PublishSymbols@2
     displayName: 'Publish symbols path'
