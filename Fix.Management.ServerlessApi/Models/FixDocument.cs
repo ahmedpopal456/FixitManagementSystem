@@ -13,7 +13,7 @@ using Fix.Management.DataContracts.FixPlans;
 namespace Fix.Management.DataContracts.Fixes
 {
   [DataContract]
-  public class FixDto
+  public class FixDocument : DocumentBase
   {
     [DataMember]
     public Guid Id { get; set; }
