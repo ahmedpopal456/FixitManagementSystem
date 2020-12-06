@@ -15,10 +15,20 @@ variables:
 
   # Version Handling Variables
   majorProductVersion: 1   
-  minorProductVersion: 0
-  
+  minorProductVersion: 0    
+  majorMinorProductVersion: $(majorProductVersion).$(minorProductVersion).0
+  patchProductVersion: $[counter(variables['majorMinorProductVersion'], 0)]
+  buildProductVersion: 0
+  buildFullVersion: $(majorProductVersion).$(minorProductVersion).$(patchProductVersion).$(buildProductVersion)
+ 
   # Artifact Drop Folder
   artifactName: 'drop'
+
+
+# Set Build Name
+name: $(majorProductVersion).$(minorProductVersion).$(patchProductVersion).$(buildProductVersion)
+
+jobs:
 
 - job: Build_Fix_Management_Projects
   pool:
