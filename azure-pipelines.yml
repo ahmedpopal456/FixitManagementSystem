@@ -111,7 +111,8 @@ jobs:
       projectName: 'FixitManagementSystem'
       extraProperties: |
         sonar.exclusions=**/*.bin
-        sonar.language=cs'
+        sonar.language=cs
+        sonar.coverageReportPaths=$(Build.SourcesDirectory)/CodeCoverage/*obertura.xml'
       
   # Build
   - task: DotNetCoreCLI@2
