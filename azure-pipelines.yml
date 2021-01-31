@@ -107,7 +107,7 @@ jobs:
       SonarCloud: 'fixit-sonarcloud'
       organization: 'fixit'
       scannerMode: 'MSBuild'
-      projectKey: 'fixit-app_FixitManagementSystem'''
+      projectKey: 'fixit-app_FixitManagementSystem'
       projectName: 'FixitManagementSystem'
       extraProperties: |
         sonar.exclusions=**/*.bin
