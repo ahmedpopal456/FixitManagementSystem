@@ -106,12 +106,12 @@ jobs:
     inputs:
       SonarCloud: 'fixit-sonarcloud'
       organization: 'fixit'
-      scannerMode: 'CLI'
-      configMode: 'manual'
-      cliProjectKey: 'fixit-app_FixitManagementSystem'
-      cliProjectName: 'FixitManagementSystem'
-      cliSources: '$(Build.SourcesDirectory)'
-      extraProperties: 'sonar.language=cs'
+      scannerMode: 'MSBuild'
+      projectKey: 'fixit-app_FixitManagementSystem'''
+      projectName: 'FixitManagementSystem'
+      extraProperties: |
+        sonar.exclusions=**/*.bin
+        sonar.language=cs'
       
   # Build
   - task: DotNetCoreCLI@2
