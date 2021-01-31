@@ -120,13 +120,6 @@ jobs:
       projects: '$(buildProjects)'
       arguments: '--configuration $(buildConfiguration) --no-restore'
 
-  # Build
-  - task: DotNetCoreCLI@2
-    displayName: Build
-    inputs:
-      projects: '$(buildProjects)'
-      arguments: '--configuration $(buildConfiguration) --no-restore'
-
   # Tests
   - task: DotNetCoreCLI@2
     displayName: Unit Tests
