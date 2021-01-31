@@ -101,6 +101,25 @@ jobs:
       feedsToUse: 'config'
       nugetConfigPath: 'nuget.config'
   
+  # Prepare Sonar Cloud Analysis 
+  - task: SonarCloudPrepare@1
+    inputs:
+      SonarCloud: 'fixit-sonarcloud'
+      organization: 'fixit'
+      scannerMode: 'CLI'
+      configMode: 'manual'
+      cliProjectKey: 'fixit-app_FixitManagementSystem'
+      cliProjectName: 'FixitManagementSystem'
+      cliSources: '$(Build.SourcesDirectory)'
+      extraProperties: 'sonar.language=cs'
+      
+  # Build
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects: '$(buildProjects)'
+      arguments: '--configuration $(buildConfiguration) --no-restore'
+
   # Build
   - task: DotNetCoreCLI@2
     displayName: Build
@@ -117,6 +136,14 @@ jobs:
       projects: '**/*.UnitTests.csproj'
       arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
       nobuild: true
+
+  # Run Sonar Cloud Analysis
+  - task: SonarCloudAnalyze@1
+
+  # Publish Sonar Cloud Report 
+  - task: SonarCloudPublish@1
+    inputs:
+      pollingTimeoutSec: '300'
 
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Fix Management ServerlessApi code coverage'
