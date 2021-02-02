@@ -133,7 +133,7 @@ jobs:
       nobuild: true
 
   - script: |
-      dotnet tool install -g dotnet-reportgenerator-globaltool --version 4.0.15 --ignore-failed-sources
+      dotnet tool install -g dotnet-reportgenerator-globaltool --version 4.8.4 --ignore-failed-sources
       reportgenerator "-reports:$(Build.SourcesDirectory)/**/coverage.opencover.xml" "-targetdir:$(Build.SourcesDirectory)/CodeCoverage" "-reporttypes:HtmlInline_AzurePipelines;Cobertura"
     displayName: Create Code coverage report
 
