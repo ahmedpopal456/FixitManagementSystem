@@ -12,6 +12,11 @@ resource "azurerm_storage_account" "api" {
   account_replication_type = "LRS"
 }
 
+resource "azurerm_storage_queue" "main" {
+  name                 = "${var.organization_name}-${var.environment_name}-${var.service_abb}-queue"
+  storage_account_name = azurerm_storage_account.main.name
+}
+
 resource "azurerm_app_service_plan" "main" {
   name                = "${var.organization_name}-${var.environment_name}-${var.service_abb}-service-plan"
   location            = azurerm_resource_group.main.location
@@ -46,7 +51,7 @@ resource "azurerm_function_app" "api" {
       "FIXIT-FMS-QUEUE-EP" : "https://stchend.queue.core.windows.net/queuetest",
       "FIXIT-FMS-QUEUE-CS" : "DefaultEndpointsProtocol=https;AccountName=stchend;AccountKey=RWzJev5oocpzEqVeg4Ap2IKyxOBTgoMJw5ULVn1cFn+xDfjkZjSLOKScgRXwNK4otFMnunXKg0Pwmm6xlgFgMA==;EndpointSuffix=core.windows.net",
       "FIXIT-FMS-QUEUE-KEY" : "RWzJev5oocpzEqVeg4Ap2IKyxOBTgoMJw5ULVn1cFn+xDfjkZjSLOKScgRXwNK4otFMnunXKg0Pwmm6xlgFgMA==",
-      "FIXIT-FMS-QUEUE-NAME" : "queuetest"
+      "FIXIT-FMS-QUEUE-NAME" : azurerm_storage_queue.main.name
     }
   }
 }
