@@ -15,16 +15,16 @@ variable "location_name" {
 }
 
 variable "organization_name" {
-  type = string
+  type    = string
   default = "fixit"
 }
 
 variable "tenant_id" {
-  type = string
+  type    = string
   default = "ccc68497-f4c0-4c2c-b499-78c30c54b52c"
 }
 
 variable "service_abb" {
-  type = string
+  type    = string
   default = "fms"
 }
