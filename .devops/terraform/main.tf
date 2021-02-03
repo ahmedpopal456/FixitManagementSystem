@@ -7,7 +7,7 @@ resource "azurerm_resource_group" "main" {
 resource "azurerm_storage_account" "api" {
   name                     = "${var.organization_name}${var.environment_name}${var.service_abb}api"
   resource_group_name      = azurerm_resource_group.main.name
-  location                 = var.location_name
+  location                 = azurerm_resource_group.main.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
