@@ -28,3 +28,19 @@ variable "service_abb" {
   type    = string
   default = "fms"
 }
+
+variable "function_apps" {
+  type = list(string)
+  default = [
+    "api",
+    "trigger"
+  ]
+}
+
+variable "cosmosdb_tables" {
+  type = map(string)
+  default = {
+    fixes = "Fixes",
+    fixplans = "FixPlans"
+  }
+}

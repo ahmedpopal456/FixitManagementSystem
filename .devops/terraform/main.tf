@@ -3,9 +3,17 @@ resource "azurerm_resource_group" "main" {
   location = var.location_name
 }
 
-// TODO: verify configurations and naming with Ahmed
-resource "azurerm_storage_account" "api" {
-  name                     = "${var.organization_name}${var.environment_name}${var.service_abb}api"
+resource "azurerm_storage_account" "main" {
+  name                     = "${var.organization_name}${var.environment_name}${var.service_abb}"
+  resource_group_name      = azurerm_resource_group.main.name
+  location                 = azurerm_resource_group.main.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_account" "app" {
+  for_each                 = toset(var.function_apps)
+  name                     = "${var.organization_name}${var.environment_name}${var.service_abb}${each.key}"
   resource_group_name      = azurerm_resource_group.main.name
   location                 = azurerm_resource_group.main.location
   account_tier             = "Standard"
@@ -14,7 +22,7 @@ resource "azurerm_storage_account" "api" {
 
 resource "azurerm_storage_queue" "main" {
   name                 = "${var.organization_name}-${var.environment_name}-${var.service_abb}-queue"
-  storage_account_name = azurerm_storage_account.api.name
+  storage_account_name = azurerm_storage_account.main.name
 }
 
 resource "azurerm_app_service_plan" "main" {
@@ -28,27 +36,40 @@ resource "azurerm_app_service_plan" "main" {
   }
 }
 
-resource "azurerm_function_app" "api" {
-  name                       = "${var.organization_name}-${var.environment_name}-${var.service_abb}-api"
+resource "azurerm_function_app" "main" {
+  for_each                   = toset(var.function_apps)
+  name                       = "${var.organization_name}-${var.environment_name}-${var.service_abb}-${each.key}"
   location                   = azurerm_resource_group.main.location
   resource_group_name        = azurerm_resource_group.main.name
   app_service_plan_id        = azurerm_app_service_plan.main.id
-  storage_account_name       = azurerm_storage_account.api.name
-  storage_account_access_key = azurerm_storage_account.api.primary_access_key
+  storage_account_name       = azurerm_storage_account.app[each.key].name
+  storage_account_access_key = azurerm_storage_account.app[each.key].primary_access_key
 
-  // TEMPORARY CONFIG
   app_settings = {
     "AzureWebJobsStorage" : "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME" : "dotnet",
-    "FIXIT-FMS-DB-EP" : "https://jlincosmostest.documents.azure.com:443/",
-    "FIXIT-FMS-DB-KEY" : "ETlBZgyZ443pHkiywqOnMJ6OUFAtLhVCr3IxhCkVptcVcCHP0JXpglFEHqnp5drnj5UCQSUuhPZkhOgtwiIGUA==",
-    "FIXIT-FMS-DB-NAME" : "cosmostest",
-    "FIXIT-FMS-DB-FIXTABLE" : "Fixes",
-    "FIXIT-FMS-DB-FIXPLANTABLENAME" : "FixPlans",
+    "FIXIT-FMS-DB-EP" : data.azurerm_cosmosdb_account.main.endpoint,
+    "FIXIT-FMS-DB-KEY" : data.azurerm_cosmosdb_account.main.primary_key,
+    "FIXIT-FMS-DB-NAME" : data.azurerm_cosmosdb_account.main.name,
+    "FIXIT-FMS-DB-FIXTABLE" : azurerm_cosmosdb_table.main["fixes"].name,
+    "FIXIT-FMS-DB-FIXPLANTABLENAME" : azurerm_cosmosdb_table.main["fixplans"].name,
 
-    "FIXIT-FMS-QUEUE-EP" : "https://stchend.queue.core.windows.net/queuetest",
-    "FIXIT-FMS-QUEUE-CS" : "DefaultEndpointsProtocol=https;AccountName=stchend;AccountKey=RWzJev5oocpzEqVeg4Ap2IKyxOBTgoMJw5ULVn1cFn+xDfjkZjSLOKScgRXwNK4otFMnunXKg0Pwmm6xlgFgMA==;EndpointSuffix=core.windows.net",
-    "FIXIT-FMS-QUEUE-KEY" : "RWzJev5oocpzEqVeg4Ap2IKyxOBTgoMJw5ULVn1cFn+xDfjkZjSLOKScgRXwNK4otFMnunXKg0Pwmm6xlgFgMA==",
+    "FIXIT-FMS-QUEUE-EP" : "https://${azurerm_storage_account.main.name}.queue.core.windows.net/${azurerm_storage_queue.main.name}",
+    "FIXIT-FMS-STORAGEACCOUNT-CS" : azurerm_storage_account.main.primary_connection_string,
+    "FIXIT-FMS-STORAGEACCOUNT-KEY" : azurerm_storage_account.main.primary_access_key,
     "FIXIT-FMS-QUEUE-NAME" : azurerm_storage_queue.main.name
   }
+}
+
+data "azurerm_cosmosdb_account" "main" {
+  name                = "${var.organization_name}-${var.environment_name}-${var.service_abb}-cosmosdb"
+  resource_group_name = azurerm_resource_group.main.name
+}
+
+resource "azurerm_cosmosdb_table" "main" {
+  for_each            = var.cosmosdb_tables
+  name                = each.value
+  resource_group_name = data.azurerm_cosmosdb_account.main.resource_group_name
+  account_name        = data.azurerm_cosmosdb_account.main.name
+  throughput          = 400
 }
