@@ -4,22 +4,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using Aliencube.AzureFunctions.Extensions.OpenApi.Core.Attributes;
 using AutoMapper;
-using Fix.Management.ServerlessApi.Managers;
+using Fix.Management.ServerlessApi.Mediators.FixPlans;
 using Fixit.Core.DataContracts.FixPlans;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace Fix.Management.ServerlessApi
+namespace Fix.Management.ServerlessApi.Functions.FixPlans.Client
 {
   public class UpdateFixPlanProposalState
   {
     private readonly IFixPlanMediator _fixPlanMediator;
-    private readonly IMapper _mapper;
 
     public UpdateFixPlanProposalState(IFixPlanMediator fixPlanMediator, IMapper mapper) : base()
     {
-      _mapper = mapper ?? throw new ArgumentNullException($"{nameof(UpdateFixPlanProposalState)} expects a value for {nameof(mapper)}... null argument was provided");
       _fixPlanMediator = fixPlanMediator ?? throw new ArgumentNullException($"{nameof(UpdateFixPlanProposalState)} expects a value for {nameof(fixPlanMediator)}... null argument was provided");
     }
 

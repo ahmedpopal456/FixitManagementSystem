@@ -4,18 +4,17 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Fix.Management.ServerlessApi.Mediators;
-using Fix.Management.ServerlessApi.Models;
-using Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests;
+using AutoMapper.Configuration;
+using Fix.Management.ServerlessApi.Mediators.FixPlans;
+using Fix.Management.ServerlessApi.Models.Document;
 using Fixit.Core.Database.DataContracts;
 using Fixit.Core.Database.DataContracts.Documents;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
-using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Fix.Management.ServerlessApi.UnitTests
+namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
 {
   [TestClass]
   public class FixPlanMediatorTests : TestBase
@@ -587,6 +586,18 @@ namespace Fix.Management.ServerlessApi.UnitTests
       
       Assert.IsNotNull(result.ToList().Count);
     }
+
+    #region TestCleanup
+    [TestCleanup]
+    public void TestCleanup()
+    {
+      // Clean-up mock objects
+      _configuration.Reset();
+      _databaseMediator.Reset();
+      _databaseTableMediator.Reset();
+      _databaseTableEntityMediator.Reset();
+    }
+    #endregion
 
   }
 }

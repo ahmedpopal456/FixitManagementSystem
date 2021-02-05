@@ -6,7 +6,7 @@ using Fixit.Core.DataContracts.FixPlans.Phases.Enums;
 using System.Linq;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks.Enums;
 
-namespace Fix.Management.ServerlessApi.Helpers
+namespace Fix.Management.ServerlessApi.Helpers.FixPlans
 {
   public static class FixPlansDtoValidators
   {
@@ -35,7 +35,7 @@ namespace Fix.Management.ServerlessApi.Helpers
           if (!fixPlanDeserialized.FixId.Equals(Guid.Empty) && 
               !fixPlanDeserialized.CreatedByCraftsman.Equals(null) && !fixPlanDeserialized.CreatedByCraftsman.Id.Equals(Guid.Empty) && !fixPlanDeserialized.CreatedByCraftsman.FirstName.Equals(string.Empty) &&
               !fixPlanDeserialized.Phases.Equals(null) && !fixPlanDeserializedPhase.Name.Equals(string.Empty) && !fixPlanDeserializedPhase.Id.Equals(Guid.Empty) &&
-              !fixPlanDeserializedTask.Equals(null) && !fixPlanDeserializedTask.Id.Equals(Guid.Empty) && !fixPlanDeserializedTask.Name.Equals(string.Empty) &&
+              !fixPlanDeserializedPhase.Tasks.Equals(null) && !fixPlanDeserializedTask.Id.Equals(Guid.Empty) && !fixPlanDeserializedTask.Name.Equals(string.Empty) &&
               !fixPlanDeserialized.BillingDetails.Equals(null) && fixPlanDeserialized.BillingDetails.InitialCost > 0 && fixPlanDeserialized.BillingDetails.EndCost > 0 && fixPlanDeserialized.TotalCost >= 0 )
           {
             fixPlanCreateRequestDto = fixPlanDeserialized;
@@ -83,17 +83,14 @@ namespace Fix.Management.ServerlessApi.Helpers
     public static bool IsValidFixPlanTaskRequest(HttpContent httpContent, out FixTaskStatusUpdateRequestDto fixTaskRequestDto)
     {
       fixTaskRequestDto = null;
-      bool isStatusValid = false; ;
+      bool isStatusValid = false;
       try
       {
         var fixTaskDeserialized = JsonConvert.DeserializeObject<FixTaskStatusUpdateRequestDto>(httpContent.ReadAsStringAsync().Result);
-        if (fixTaskDeserialized != null)
+        if (fixTaskDeserialized != null && !fixTaskDeserialized.Status.Equals(null))
         {
-          if (!fixTaskDeserialized.Status.Equals(null))
-          {
-            fixTaskRequestDto = fixTaskDeserialized;
-            isStatusValid = true;
-          } 
+          fixTaskRequestDto = fixTaskDeserialized;
+          isStatusValid = true;
         }
 
       }

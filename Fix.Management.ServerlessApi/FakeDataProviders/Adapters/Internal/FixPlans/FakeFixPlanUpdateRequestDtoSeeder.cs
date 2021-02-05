@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
 using Fixit.Core.DataContracts.FixPlans.Phases;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks;
-using Fixit.Core.DataContracts.Seeders;
+using Fixit.Core.DataContracts;
 
 namespace Fix.Management.ServerlessApi.FakeDataProviders.Adapters.Internal.FixPlans
 {
@@ -25,9 +25,9 @@ namespace Fix.Management.ServerlessApi.FakeDataProviders.Adapters.Internal.FixPl
               new FixPhaseTaskDto()
               {
                 Description="Testing",
-              Id = Guid.Parse("1e811863-dea8-44c1-a95d-4b0b34a9970e"),
-              Name = "Test",
-              Order =0
+                Id = Guid.Parse("1e811863-dea8-44c1-a95d-4b0b34a9970e"),
+                Name = "Test",
+                Order =0
               }         
             }
           }

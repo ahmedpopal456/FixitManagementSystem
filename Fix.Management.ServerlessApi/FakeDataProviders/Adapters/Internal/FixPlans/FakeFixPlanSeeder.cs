@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Fix.Management.ServerlessApi.Models;
+using Fix.Management.ServerlessApi.Models.Document;
 using Fixit.Core.DataContracts.FixPlans.BillingDetails;
 using Fixit.Core.DataContracts.FixPlans.Enums;
 using Fixit.Core.DataContracts.FixPlans.Phases;
 using Fixit.Core.DataContracts.FixPlans.Phases.Enums;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks.Enums;
-using Fixit.Core.DataContracts.Seeders;
+using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Users;
 
 namespace Fix.Management.ServerlessApi.FakeDataProviders.Adapters.Internal.FixPlans

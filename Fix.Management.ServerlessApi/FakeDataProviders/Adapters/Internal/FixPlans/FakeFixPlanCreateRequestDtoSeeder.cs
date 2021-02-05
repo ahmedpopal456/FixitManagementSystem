@@ -5,7 +5,7 @@ using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
 using Fixit.Core.DataContracts.FixPlans.Phases;
 using Fixit.Core.DataContracts.FixPlans.Phases.Cost;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks;
-using Fixit.Core.DataContracts.Seeders;
+using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Users;
 
 namespace Fix.Management.ServerlessApi.FakeDataProviders.Adapters.Internal.FixPlans

@@ -7,7 +7,7 @@ using Fixit.Core.DataContracts.FixPlans.Enums;
 using Fixit.Core.DataContracts.FixPlans.Phases;
 using Fixit.Core.DataContracts.Users;
 
-namespace Fix.Management.ServerlessApi.Models
+namespace Fix.Management.ServerlessApi.Models.Document
 {
   [DataContract]
   public class FixPlanDocument : DocumentBase

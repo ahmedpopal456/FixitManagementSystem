@@ -4,8 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using Fix.Management.ServerlessApi.Managers;
-using Fix.Management.ServerlessApi.Models;
+using Fix.Management.ServerlessApi.Models.Document;
 using Fixit.Core.Database.DataContracts;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts.FixPlans;
@@ -17,13 +16,12 @@ using Fixit.Core.DataContracts.FixPlans.Phases.Tasks;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks.Enums;
 using Microsoft.Extensions.Configuration;
 
-namespace Fix.Management.ServerlessApi.Mediators
+namespace Fix.Management.ServerlessApi.Mediators.FixPlans
 {
   public class FixPlanMediator : IFixPlanMediator
   {
     private readonly IMapper _mapper;
     private readonly IDatabaseTableEntityMediator _databaseFixTable;
-    private readonly IConfiguration _configurationProvider;
 
     public FixPlanMediator(IMapper mapper,
                            IConfiguration configurationProvider,
@@ -31,7 +29,6 @@ namespace Fix.Management.ServerlessApi.Mediators
     {
       var databaseName = configurationProvider["FIXIT-FMS-DB-NAME"];
       var databaseFixTableName = configurationProvider["FIXIT-FMS-DB-FIXPLANTABLENAME"];
-      _configurationProvider = configurationProvider;
 
       if (string.IsNullOrWhiteSpace(databaseName))
       {
@@ -88,7 +85,7 @@ namespace Fix.Management.ServerlessApi.Mediators
       fixPlan.UpdatedTimestampUtc = currentTimeStamp;
 
       var creationResponse = await _databaseFixTable.CreateItemAsync(fixPlan, fixPlanCreateRequestDto.CreatedByCraftsman.Id.ToString(), cancellationToken);
-      if(creationResponse != null)
+      if (creationResponse != null)
       {
         result = new FixPlanDto()
         {
@@ -110,13 +107,13 @@ namespace Fix.Management.ServerlessApi.Mediators
     {
       cancellationToken.ThrowIfCancellationRequested();
       var result = default(OperationStatus);
-      var (fixPlanDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixPlanDocument>(null, cancellationToken, i => i.id == fixPlanId.ToString());  
+      var (fixPlanDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixPlanDocument>(null, cancellationToken, i => i.id == fixPlanId.ToString());
       var fixPlanDocument = fixPlanDocumentCollection?.Results.SingleOrDefault();
       if (fixPlanDocument != null)
       {
         result = await _databaseFixTable.DeleteItemAsync<FixPlanDocument>(fixPlanId.ToString(), fixPlanDocument.EntityId, cancellationToken);
-      }       
-      
+      }
+
       return result;
     }
     #endregion
@@ -127,8 +124,8 @@ namespace Fix.Management.ServerlessApi.Mediators
       cancellationToken.ThrowIfCancellationRequested();
       var result = default(FixPlanDto);
 
-      var(fixPlanDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixPlanDocument>(null, cancellationToken, i => i.id == fixPlanId.ToString());
-      if(fixPlanDocumentCollection != null)
+      var (fixPlanDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixPlanDocument>(null, cancellationToken, i => i.id == fixPlanId.ToString());
+      if (fixPlanDocumentCollection != null)
       {
         result = new FixPlanDto()
         {
@@ -138,7 +135,7 @@ namespace Fix.Management.ServerlessApi.Mediators
         if (fixPlanDocumentCollection.IsOperationSuccessful)
         {
           FixPlanDocument fixPlanDocument = fixPlanDocumentCollection.Results.SingleOrDefault();
-          if(fixPlanDocument != null)
+          if (fixPlanDocument != null)
           {
             result = _mapper.Map<FixPlanDocument, FixPlanDto>(fixPlanDocument);
             result.IsOperationSuccessful = true;
@@ -155,10 +152,10 @@ namespace Fix.Management.ServerlessApi.Mediators
 
       var (fixPlanDocumentCollection, continuationToken) = (await _databaseFixTable.GetItemQueryableAsync<FixPlanDocument>(null, cancellationToken, i => i.CreatedByCraftsman.Id == userId));
 
-      if (fixPlanDocumentCollection.IsOperationSuccessful && fixPlanDocumentCollection != null)
+      if (fixPlanDocumentCollection != null && fixPlanDocumentCollection.IsOperationSuccessful)
       {
         result = fixPlanDocumentCollection.Results.Select(document => _mapper.Map<FixPlanDocument, FixPlanDto>(document)).ToList();
-      }     
+      }
       return result;
     }
     #endregion
@@ -183,7 +180,7 @@ namespace Fix.Management.ServerlessApi.Mediators
         if (fixPlanDocumentCollection.IsOperationSuccessful)
         {
           FixPlanDocument fixPlanUpdateDocument = fixPlanDocumentCollection.Results.SingleOrDefault();
-          if(fixPlanUpdateDocument != null)
+          if (fixPlanUpdateDocument != null)
           {
             //Bookmarks
             //TODO: Extract bookmarked as it's own api
@@ -198,7 +195,7 @@ namespace Fix.Management.ServerlessApi.Mediators
             //Change state back to Tentative
             fixPlanUpdateDocument.ProposalState = FixPlanProposalStates.Tentative;
 
-            var operationStatus = await _databaseFixTable.UpdateItemAsync(fixPlanUpdateDocument, fixPlanUpdateDocument.EntityId, cancellationToken) ;
+            var operationStatus = await _databaseFixTable.UpdateItemAsync(fixPlanUpdateDocument, fixPlanUpdateDocument.EntityId, cancellationToken);
 
             result = operationStatus.IsOperationSuccessful ? _mapper.Map<FixPlanDocument, FixPlanDto>(fixPlanUpdateDocument) : result;
             result.IsOperationSuccessful = operationStatus.IsOperationSuccessful;
@@ -214,10 +211,10 @@ namespace Fix.Management.ServerlessApi.Mediators
     {
       cancellationToken.ThrowIfCancellationRequested();
       var result = default(FixPhaseDto);
-      
+
 
       var (fixPlanDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixPlanDocument>(null, cancellationToken, i => i.id == fixPlanId.ToString());
-      if(fixPlanDocumentCollection != null)
+      if (fixPlanDocumentCollection != null)
       {
         result = new FixPhaseDto()
         {
@@ -228,12 +225,12 @@ namespace Fix.Management.ServerlessApi.Mediators
         if (fixPlanDocumentCollection.IsOperationSuccessful)
         {
           FixPlanDocument fixUpdateDocument = fixPlanDocumentCollection.Results.SingleOrDefault();
-          if(fixUpdateDocument != null)
+          if (fixUpdateDocument != null)
           {
-            var fixPlanPhaseToUpdate = fixUpdateDocument.Phases.Where(phase => phase.Id == phaseId).SingleOrDefault();
+            var fixPlanPhaseToUpdate = fixUpdateDocument.Phases.SingleOrDefault(phase => phase.Id == phaseId);
             if (Enum.IsDefined(typeof(PhaseStatuses), fixPhaseStatusUpdateRequestDto.Status) && fixPhaseStatusUpdateRequestDto.Status != PhaseStatuses.Done)
             {
-              fixPlanPhaseToUpdate.Status = fixPhaseStatusUpdateRequestDto.Status;         
+              fixPlanPhaseToUpdate.Status = fixPhaseStatusUpdateRequestDto.Status;
             }
             var operationStatus = await _databaseFixTable.UpdateItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
 
@@ -252,9 +249,9 @@ namespace Fix.Management.ServerlessApi.Mediators
       cancellationToken.ThrowIfCancellationRequested();
 
       var result = default(FixPhaseTaskDto);
-      
+
       var (fixPlanDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixPlanDocument>(null, cancellationToken, i => i.id == fixPlanId.ToString());
-      if(fixPlanDocumentCollection != null)
+      if (fixPlanDocumentCollection != null)
       {
         result = new FixPhaseTaskDto()
         {
@@ -262,27 +259,21 @@ namespace Fix.Management.ServerlessApi.Mediators
           OperationMessage = fixPlanDocumentCollection.OperationMessage
         };
 
-        if (fixPlanDocumentCollection.IsOperationSuccessful)
-        {
-          FixPlanDocument fixUpdateDocument = fixPlanDocumentCollection.Results.SingleOrDefault();
-          if (fixUpdateDocument != null)
-          {            
-              var fixPlanTaskToUpdate = fixUpdateDocument.Phases.Where(fixPhase => fixPhase.Id == phaseId).SingleOrDefault()
-                                                         .Tasks.Where(fixTask => fixTask.Id == taskId).SingleOrDefault();
-              if (fixPlanTaskToUpdate != null)
-              {
-                if (Enum.IsDefined(typeof(TaskStatuses), fixTaskStatusUpdateRequestDto.Status) && fixTaskStatusUpdateRequestDto.Status != TaskStatuses.Done)
-                {
-                  fixPlanTaskToUpdate.Status = fixTaskStatusUpdateRequestDto.Status;
-                }
-                var operationStatus = await _databaseFixTable.UpdateItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
+        FixPlanDocument fixUpdateDocument = fixPlanDocumentCollection.IsOperationSuccessful ? fixPlanDocumentCollection.Results.SingleOrDefault() : default;
 
-                result = operationStatus.IsOperationSuccessful ? fixPlanTaskToUpdate:result;
-                result.IsOperationSuccessful = operationStatus.IsOperationSuccessful;
-                result.OperationException = operationStatus?.OperationException;
-                result.OperationMessage = operationStatus?.OperationMessage;
-            }     
-          }
+        var fixPlanTaskToUpdate = fixUpdateDocument != null ? fixUpdateDocument.Phases.SingleOrDefault(fixPhase => fixPhase.Id == phaseId)
+                                                                               .Tasks.SingleOrDefault(fixTask => fixTask.Id == taskId) : default;
+        if (fixPlanTaskToUpdate != null)
+        {
+          fixPlanTaskToUpdate.Status = Enum.IsDefined(typeof(TaskStatuses), fixTaskStatusUpdateRequestDto.Status)
+                                      && fixTaskStatusUpdateRequestDto.Status != TaskStatuses.Done ? fixTaskStatusUpdateRequestDto.Status : fixPlanTaskToUpdate.Status;
+
+          var operationStatus = await _databaseFixTable.UpdateItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
+
+          result = operationStatus.IsOperationSuccessful ? fixPlanTaskToUpdate : result;
+          result.IsOperationSuccessful = operationStatus.IsOperationSuccessful;
+          result.OperationException = operationStatus?.OperationException;
+          result.OperationMessage = operationStatus?.OperationMessage;
         }
       }
       return result;
@@ -298,7 +289,7 @@ namespace Fix.Management.ServerlessApi.Mediators
 
       var (fixPlanDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixPlanDocument>(null, cancellationToken, i => i.id == fixPlanId.ToString());
 
-      if(fixPlanDocumentCollection != null)
+      if (fixPlanDocumentCollection != null)
       {
         result = new FixPlanDto()
         {
@@ -308,7 +299,7 @@ namespace Fix.Management.ServerlessApi.Mediators
         if (fixPlanDocumentCollection.IsOperationSuccessful)
         {
           FixPlanDocument fixUpdateDocument = fixPlanDocumentCollection.Results.SingleOrDefault();
-          if(fixUpdateDocument != null)
+          if (fixUpdateDocument != null)
           {
             if (fixUpdateDocument.ProposalState != FixPlanProposalStates.Approved)
             {
@@ -333,31 +324,28 @@ namespace Fix.Management.ServerlessApi.Mediators
       var result = default(FixPhaseDto);
 
       var (fixPlanDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixPlanDocument>(null, cancellationToken, i => i.id == fixPlanId.ToString());
-      if(fixPlanDocumentCollection != null)
+      if (fixPlanDocumentCollection != null)
       {
         result = new FixPhaseDto()
         {
           OperationException = fixPlanDocumentCollection.OperationException,
           OperationMessage = fixPlanDocumentCollection.OperationMessage
         };
-        if (fixPlanDocumentCollection.IsOperationSuccessful)
+
+        FixPlanDocument fixUpdateDocument = fixPlanDocumentCollection.IsOperationSuccessful ? fixPlanDocumentCollection.Results.SingleOrDefault() : default;
+
+        if (fixUpdateDocument != null)
         {
-          FixPlanDocument fixUpdateDocument = fixPlanDocumentCollection.Results.SingleOrDefault();
-          if(fixUpdateDocument != null)
-          {
-            var fixPlanPhaseToUpdate = fixUpdateDocument.Phases.SingleOrDefault(phase => phase.Id == phaseId);
-            if (fixPlanPhaseToUpdate != null && fixPlanPhaseToUpdate.Status != PhaseStatuses.Done)
-            {
-              fixPlanPhaseToUpdate.Status = PhaseStatuses.Done;
-            }
+          var fixPlanPhaseToUpdate = fixUpdateDocument.Phases.SingleOrDefault(phase => phase.Id == phaseId);
 
-            var operationStatus = await _databaseFixTable.UpdateItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
+          fixPlanPhaseToUpdate.Status = fixPlanPhaseToUpdate.Status != PhaseStatuses.Done ? PhaseStatuses.Done : default;
 
-            result = operationStatus.IsOperationSuccessful ? fixPlanPhaseToUpdate : result;
-            result.IsOperationSuccessful = operationStatus.IsOperationSuccessful;
-            result.OperationException = operationStatus.OperationException;
-            result.OperationMessage = operationStatus.OperationMessage;
-          }
+          var operationStatus = await _databaseFixTable.UpdateItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
+
+          result = operationStatus.IsOperationSuccessful ? fixPlanPhaseToUpdate : result;
+          result.IsOperationSuccessful = operationStatus?.IsOperationSuccessful ?? default;
+          result.OperationException = operationStatus?.OperationException;
+          result.OperationMessage = operationStatus?.OperationMessage;
         }
       }
       return result;

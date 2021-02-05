@@ -1,13 +1,14 @@
-﻿using Fixit.Core.Database.Mediators;
-using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AutoMapper;
-using Fix.Management.ServerlessApi.Mappers;
-using Moq;
+﻿using AutoMapper;
+using AutoMapper.Configuration;
 using Fix.Management.ServerlessApi.FakeDataProviders.Adapters;
-using Fixit.Core.DataContracts.Seeders;
+using Fix.Management.ServerlessApi.Mappers;
+using Fixit.Core.Database.Mediators;
+using Fixit.Core.DataContracts;
+using Fixit.Core.Storage.Queue.Mediators;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
-namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
+namespace Fix.Management.ServerlessApi.UnitTests
 {
   [TestClass]
   public class TestBase
@@ -22,10 +23,15 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
     protected Mock<IDatabaseTableMediator> _databaseTableMediator;
     protected Mock<IDatabaseTableEntityMediator> _databaseTableEntityMediator;
 
+    //Queue Storage Mock
+    protected Mock<IQueueServiceClientMediator> _queueStorageMediator;
+    protected Mock<IQueueClientMediator> _queueStorageEntityMediator;
+
     // Mapper
     protected MapperConfiguration _mapperConfiguration = new MapperConfiguration(config =>
     {
       config.AddProfile(new FixPlanManagementMapper());
+      config.AddProfile(new FixManagementMapper());
     });
 
     public TestBase()
@@ -42,5 +48,6 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
     public static void AfterSuiteTests()
     {
     }
+
   }
 }

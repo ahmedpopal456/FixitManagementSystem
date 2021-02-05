@@ -2,27 +2,25 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Fix.Management.ServerlessApi.Helpers;
+using Fix.Management.ServerlessApi.Helpers.FixPlans;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using AutoMapper;
-using Fix.Management.ServerlessApi.Managers;
+using Fix.Management.ServerlessApi.Mediators.FixPlans;
 using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
 using System.Net;
 using Aliencube.AzureFunctions.Extensions.OpenApi.Core.Attributes;
 
-namespace Fix.Management.ServerlessApi
+namespace Fix.Management.ServerlessApi.Functions.FixPlans.Craftsman
 {
   public class CreateFixPlan
   {
     private readonly IFixPlanMediator _fixPlanMediator;
-    private readonly IMapper _mapper;
 
     public CreateFixPlan(IFixPlanMediator fixPlanMediator, IMapper mapper) : base()
     {
-      _mapper = mapper ?? throw new ArgumentNullException($"{nameof(CreateFixPlan)} expects a value for {nameof(mapper)}... null argument was provided");
       _fixPlanMediator = fixPlanMediator ?? throw new ArgumentNullException($"{nameof(CreateFixPlan)} expects a value for {nameof(fixPlanMediator)}... null argument was provided");
     }
 

@@ -1,7 +1,10 @@
-﻿using Fix.Management.ServerlessApi.FakeDataProviders.Adapters.Internal.FixPlans;
-using Fix.Management.ServerlessApi.Models;
+﻿using Fix.Management.ServerlessApi.FakeDataProviders.Adapters.Fixes;
+using Fix.Management.ServerlessApi.FakeDataProviders.Adapters.Internal.Fixes;
+using Fix.Management.ServerlessApi.Models.Document;
+using Fixit.Core.DataContracts;
+using Fixit.Core.DataContracts.Fixes.Operations.Requests;
+using Fix.Management.ServerlessApi.FakeDataProviders.Adapters.Internal.FixPlans;
 using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
-using Fixit.Core.DataContracts.Seeders;
 
 namespace Fix.Management.ServerlessApi.FakeDataProviders.Adapters
 {
@@ -13,6 +16,14 @@ namespace Fix.Management.ServerlessApi.FakeDataProviders.Adapters
 
       switch (type)
       {
+        case nameof(FixDocument):
+          return (IFakeSeederAdapter<T>)new FakeFixDocumentSeeder();
+        case nameof(FixCreateRequestDto):
+          return (IFakeSeederAdapter<T>)new FakeFixCreateRequestDtoSeeder();
+        case nameof(FixUpdateRequestDto):
+          return (IFakeSeederAdapter<T>)new FakeFixUpdateRequestDtoSeeder();
+        case nameof(FixUpdateAssignRequestDto):
+          return (IFakeSeederAdapter<T>)new FakeFixUpdateAssignRequestDtoSeeder();
         case nameof(FixPlanDocument):
           return (IFakeSeederAdapter<T>)new FakeFixPlanSeeder();
         case nameof(FixPlanCreateRequestDto):

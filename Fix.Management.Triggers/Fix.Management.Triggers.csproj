@@ -6,8 +6,8 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Fixit.Core.Database" Version="1.0.15" />
-    <PackageReference Include="Fixit.Core.DataContracts" Version="1.0.84" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.7" />
+    <PackageReference Include="Fixit.Core.DataContracts" Version="1.0.105" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.11" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.2.3" />
   </ItemGroup>
   <ItemGroup>

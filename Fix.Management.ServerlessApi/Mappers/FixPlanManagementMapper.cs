@@ -1,7 +1,7 @@
 ﻿using System;
 using Fixit.Core.DataContracts.FixPlans;
 using AutoMapper;
-using Fix.Management.ServerlessApi.Models;
+using Fix.Management.ServerlessApi.Models.Document;
 using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
 using Fixit.Core.DataContracts.FixPlans.Phases;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks;

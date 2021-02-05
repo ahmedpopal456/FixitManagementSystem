@@ -8,7 +8,7 @@ using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
 using Fixit.Core.DataContracts.FixPlans.Phases;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks;
 
-namespace Fix.Management.ServerlessApi.Managers
+namespace Fix.Management.ServerlessApi.Mediators.FixPlans
 {
   public interface IFixPlanMediator
   {
@@ -18,7 +18,7 @@ namespace Fix.Management.ServerlessApi.Managers
     /// <param name="fixDto"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<FixPlanDto> CreateFixPlanAsync(FixPlanCreateRequestDto fixDto, CancellationToken cancellationToken);
+    Task<FixPlanDto> CreateFixPlanAsync(FixPlanCreateRequestDto fixPlanCreateRequestDto, CancellationToken cancellationToken);
     /// <summary>
     /// Get Fix plan by Id
     /// </summary>
@@ -40,7 +40,7 @@ namespace Fix.Management.ServerlessApi.Managers
     /// <param name="fixDto"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<FixPlanDto> UpdateFixPlanStructureAsync(Guid fixPlanId, FixPlanUpdateRequestDto fixDto, CancellationToken cancellationToken);
+    Task<FixPlanDto> UpdateFixPlanStructureAsync(Guid fixPlanId, FixPlanUpdateRequestDto fixPlanUpdateRequestDto, CancellationToken cancellationToken);
     /// <summary>
     /// Update fix plan phase 
     /// </summary>
@@ -49,7 +49,7 @@ namespace Fix.Management.ServerlessApi.Managers
     /// <param name="fixPhaseDto"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<FixPhaseDto> UpdateFixPlanPhaseStatusAsync(Guid fixPlanId, Guid phaseId, FixPhaseStatusUpdateRequestDto fixPhaseDto, CancellationToken cancellationToken);
+    Task<FixPhaseDto> UpdateFixPlanPhaseStatusAsync(Guid fixPlanId, Guid phaseId, FixPhaseStatusUpdateRequestDto fixPhaseStatusUpdateRequestDto, CancellationToken cancellationToken);
     /// <summary>
     /// Update fix plan phase task 
     /// </summary>
@@ -59,7 +59,7 @@ namespace Fix.Management.ServerlessApi.Managers
     /// <param name="fixTaskDto"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<FixPhaseTaskDto> UpdateFixPlanTaskStatusAsync(Guid id, Guid phaseId, Guid taskId, FixTaskStatusUpdateRequestDto fixTaskDto, CancellationToken cancellationToken);
+    Task<FixPhaseTaskDto> UpdateFixPlanTaskStatusAsync(Guid fixPlanId, Guid phaseId, Guid taskId, FixTaskStatusUpdateRequestDto fixTaskStatusUpdateRequestDto, CancellationToken cancellationToken);
     /// <summary>
     /// Update state of fix plan by client
     /// </summary>
