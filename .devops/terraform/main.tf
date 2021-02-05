@@ -46,7 +46,7 @@ resource "azurerm_function_app" "main" {
   storage_account_access_key = azurerm_storage_account.app[each.key].primary_access_key
 
   app_settings = {
-    "AzureWebJobsStorage" : "UseDevelopmentStorage=true",
+    "AzureWebJobsStorage" : "UseDevelopmentStorage=false",
     "FUNCTIONS_WORKER_RUNTIME" : "dotnet",
     "FIXIT-FMS-DB-EP" : data.azurerm_cosmosdb_account.main.endpoint,
     "FIXIT-FMS-DB-KEY" : data.azurerm_cosmosdb_account.main.primary_key,
@@ -59,11 +59,6 @@ resource "azurerm_function_app" "main" {
     "FIXIT-FMS-STORAGEACCOUNT-KEY" : azurerm_storage_account.main.primary_access_key,
     "FIXIT-FMS-QUEUE-NAME" : azurerm_storage_queue.main.name
   }
-}
-
-data "azurerm_cosmosdb_account" "main" {
-  name                = "${var.organization_name}-${var.environment_name}-${var.service_abb}-cosmosdb"
-  resource_group_name = azurerm_resource_group.main.name
 }
 
 resource "azurerm_cosmosdb_table" "main" {
