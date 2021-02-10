@@ -192,3 +192,10 @@ jobs:
     inputs:
       PathtoPublish: '$(build.artifactstagingdirectory)'
       ArtifactName: 'drop'
+  
+  - task: CopyFiles@2
+    displayName: 'Publish Terraform Configuration'
+    inputs:
+      SourceFolder: '.devops/terraform'
+      Contents: '**'
+      TargetFolder: '$(build.artifactstagingdirectory)/terraform'
