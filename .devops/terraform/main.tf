@@ -31,8 +31,8 @@ resource "azurerm_app_service_plan" "main" {
   resource_group_name = azurerm_resource_group.main.name
 
   sku {
-    tier = "Standard"
-    size = "S1"
+    tier = "Dynamic"
+    size = "Y1"
   }
 }
 

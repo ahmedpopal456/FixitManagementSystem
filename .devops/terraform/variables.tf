@@ -24,7 +24,7 @@ variable "tenant_id" {
   default = "ccc68497-f4c0-4c2c-b499-78c30c54b52c"
 }
 
-variable "service_abb" {
+variable "service_abbreviation" {
   type    = string
   default = "fms"
 }
