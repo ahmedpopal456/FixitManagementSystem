@@ -186,12 +186,6 @@ jobs:
       SearchPattern: '*\bin**.pdb'
       PublishSymbols: false
     continueOnError: true
-
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact'
-    inputs:
-      PathtoPublish: '$(build.artifactstagingdirectory)'
-      ArtifactName: 'drop'
   
   - task: CopyFiles@2
     displayName: 'Publish Terraform Configuration'
@@ -199,3 +193,9 @@ jobs:
       SourceFolder: '.devops/terraform'
       Contents: '**'
       TargetFolder: '$(build.artifactstagingdirectory)/terraform'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
+      ArtifactName: 'drop'
