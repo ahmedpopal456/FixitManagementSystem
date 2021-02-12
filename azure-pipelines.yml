@@ -128,7 +128,7 @@ jobs:
       command: 'test'
       testRunTitle: 'Fix Management Unit Tests'
       projects: '**/*.UnitTests.csproj'
-      arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover'
+      arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude="[*]Fix.Management.ServerlessApi.Functions*"'
       nobuild: true
 
   - script: |
