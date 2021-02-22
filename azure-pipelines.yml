@@ -17,7 +17,7 @@ variables:
   # Version Handling Variables
   majorProductVersion: 1
   minorProductVersion: 0
- 
+
   # Artifact Drop Folder
   artifactName: 'drop'
 
@@ -96,14 +96,14 @@ jobs:
     displayName: 'Use NuGet 4.4.1'
     inputs:
       versionSpec: '4.4.1'
-  
+
   # Specify sdk Version
   - task: UseDotNet@2
     displayName: 'Use sdk 3.1.102'
     inputs:
       packageType: 'sdk'
       version: '3.1.102'
-  
+
   # Restore
   - task: DotNetCoreCLI@2
     displayName: Restore
@@ -113,7 +113,7 @@ jobs:
       includeNuGetOrg: true
       feedsToUse: 'config'
       nugetConfigPath: 'nuget.config'
-  
+
   # Prepare Sonar Cloud Analysis
   - task: SonarCloudPrepare@1
     inputs:
@@ -141,7 +141,7 @@ jobs:
       command: 'test'
       testRunTitle: 'Fix Management Unit Tests'
       projects: '**/*.UnitTests.csproj'
-      arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover'
+      arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude="[*]Fix.Management.ServerlessApi.Functions*"'
       nobuild: true
 
   - script: |
@@ -159,7 +159,7 @@ jobs:
   # Run Sonar Cloud Analysis
   - task: SonarCloudAnalyze@1
 
-  # Publish Sonar Cloud Report 
+  # Publish Sonar Cloud Report
   - task: SonarCloudPublish@1
     inputs:
       pollingTimeoutSec: '300'
@@ -199,7 +199,7 @@ jobs:
       SearchPattern: '*\bin**.pdb'
       PublishSymbols: false
     continueOnError: true
-  
+
   # Publish projects
   - task: DotNetCoreCLI@2
     displayName: 'Publish projects'

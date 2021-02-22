@@ -5,7 +5,7 @@ terraform {
     key                  = "fixit-fms.terraform.tfstate"
     access_key           = "__storagekey__"
   }
-  
+
   required_version = "=0.14.5"
 
   required_providers {
