@@ -199,6 +199,13 @@ jobs:
       SearchPattern: '*\bin**.pdb'
       PublishSymbols: false
     continueOnError: true
+  
+  - task: CopyFiles@2
+    displayName: 'Publish Terraform Configuration'
+    inputs:
+      SourceFolder: '.devops/terraform'
+      Contents: '**'
+      TargetFolder: '$(build.artifactstagingdirectory)/terraform'
 
   # Publish projects
   - task: DotNetCoreCLI@2
