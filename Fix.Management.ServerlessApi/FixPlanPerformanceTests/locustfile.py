@@ -5,6 +5,7 @@ class FixitFix(HttpUser):
     host = "http://localhost:7071"
     wait_time = between(2, 10)
     fix_id = ""
+    DESCRIPTION = "Task Description"
 
 
     @tag('get_fix_plan', 'fix')
@@ -54,14 +55,14 @@ class FixitFix(HttpUser):
                 {
                     "id": "f650e970-084a-4a9e-bce9-630c2589f346",
                     "name": "name",
-                    "description": "Task Description",
+                    "description": DESCRIPTION,
                     "order": 0,
                     "status": 0
                 },
                 {
                     "id": "f770e970-084a-4a9e-bce9-630c2589f346",
                     "name": "name",
-                    "description": "Task Description",
+                    "description": DESCRIPTION,
                     "order": 0,
                     "status": 0
                 }
@@ -75,7 +76,7 @@ class FixitFix(HttpUser):
         self.client.put(f"http://localhost:7071/api/fixPlans/{self.fix_id}/phases/44c67585-a234-4bb2-852c-eccd17293058/tasks/f650e970-084a-4a9e-bce9-630c2589f346/status",
         json={
             "name": "testing",
-            "description": "task Description",
+            "description": DESCRIPTION,
             "order": 0,
             "status": 0
         },
@@ -105,7 +106,7 @@ class FixitFix(HttpUser):
                     "tasks": {
                         "id": "f650e970-084a-4a9e-bce9-630c2589f346",
                         "name": "test",
-                        "description": "Task Description",
+                        "description": DESCRIPTION,
                         "order": "1"
                     }
                 }
