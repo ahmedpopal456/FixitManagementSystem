@@ -16,6 +16,7 @@ using System.Web;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using Fixit.Core.DataContracts.Fixes.Enums;
+using System.Linq;
 
 namespace Fix.Management.ServerlessApi.Functions.Fixes
 {
@@ -40,13 +41,20 @@ namespace Fix.Management.ServerlessApi.Functions.Fixes
     {
       IEnumerable<FixStatuses>? fixStatusesFilter = null;
 
-      var statuses = HttpUtility.ParseQueryString(httpRequest.RequestUri.Query).Get(" ");
-      fixStatusesFilter = statuses == null ? fixStatusesFilter : JsonConvert.DeserializeObject<IEnumerable<FixStatuses>>(statuses);
+      var statuses = HttpUtility.ParseQueryString(httpRequest.RequestUri.Query).Get("statuses");
+      if (!string.IsNullOrWhiteSpace(statuses))
+      {
+        fixStatusesFilter = statuses.Split(',')?.Select(status =>
+        {
+          Enum.TryParse(typeof(FixStatuses), status, out object? result);
+          return (FixStatuses)result;
+        });
+      }
 
       return await GetFixesAsync(id, cancellationToken, fixStatusesFilter);
     }
 
-    public async Task<IActionResult> GetFixesAsync(Guid userId, CancellationToken cancellationToken, IEnumerable<FixStatuses>? fixStatuses)
+    public async Task<IActionResult> GetFixesAsync(Guid userId, CancellationToken cancellationToken, IEnumerable<FixStatuses>? fixStatuses = null)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
