@@ -1,5 +1,6 @@
 import spacy
 import pandas as pd
+import logging
 from rank_bm25 import BM25Okapi
 # Load English tokenizer, tagger, parser, NER and word vectors
 nlp = spacy.load("en_core_web_sm")
@@ -57,10 +58,13 @@ class TemplateSearchMatching():
         # Format search query
         tok_query = query.lower().strip('\"').split(" ") 
         # Apply BM25 (TF-IDF)
-        bm_25 = BM25Okapi(self.tok_templates)
-        results = bm_25.get_scores(tok_query)
-        self.templates.insert(len(self.templates.columns),
-                              "bm25-score", results)
+        try:
+            bm_25 = BM25Okapi(self.tok_templates)
+            results = bm_25.get_scores(tok_query)
+            self.templates.insert(len(self.templates.columns),"bm25-score", results)
+        except ZeroDivisionError:
+            logging.exception("Unable to apply bm25. No Fix Templates to compare to.")
+            self.templates['bm25-score'] = 0
 
     """
     TODO: Integrate match(), the second part of algorithm, once the system features are confirmed.
