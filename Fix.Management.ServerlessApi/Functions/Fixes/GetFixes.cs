@@ -60,7 +60,7 @@ namespace Fix.Management.ServerlessApi.Functions.Fixes
 
       if (userId.Equals(Guid.Empty))
       {
-        return new BadRequestObjectResult($"{nameof(userId)} is not valid..");
+        return new BadRequestObjectResult($"{nameof(GetFixesAsync)} expects a value for {nameof(userId)}... null argument was provided");
       }
 
       var fixes = await _fixMediator.GetFixesByUserAsync(userId, cancellationToken, fixStatuses);
