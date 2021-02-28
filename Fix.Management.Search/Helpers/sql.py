@@ -53,7 +53,7 @@ class SqlDatabase():
             filter: str
                 SQL query of the filter to be set.
         """
-        filter : str
+        filter : str = ""
         self.budget: str = self.request_param.get('budget')
         budget_sql: str = """[SystemCostEstimate] <= ? """
         self.last_accessed: str = self.request_param.get('accessed')
