@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -11,6 +13,7 @@ using Fixit.Core.DataContracts.Fixes.Enums;
 using Fixit.Core.DataContracts.Fixes.Operations.Requests;
 using Fixit.Core.DataContracts.Fixes.Operations.Responses;
 using Fixit.Core.Storage.Queue.Mediators;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
@@ -148,7 +151,8 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
 
     #endregion
 
-    #region GET Fixes
+    #region Get Fixes
+
 
     public async Task<FixResponseDto> GetFixAsync(Guid fixId, CancellationToken cancellationToken)
     {
@@ -167,6 +171,37 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
       
       return result;
     }
+    
+    public async Task<IEnumerable<FixResponseDto>> GetFixesByUserAsync(Guid userId, CancellationToken cancellationToken, IEnumerable<FixStatuses> fixStatuses = null)
+    {
+      cancellationToken.ThrowIfCancellationRequested(); 
+
+      if(userId.Equals(Guid.Empty))
+      {
+        throw new ArgumentNullException(nameof(userId));
+      }
+
+      string currentContinuationToken = "";
+      var fixResponses = new List<FixResponseDto>();
+
+      Expression<Func<FixDocument, bool>> expression = fixDocument => (fixStatuses == null || (fixStatuses.Contains(fixDocument.Status)) &&
+                                                                      ((fixDocument.AssignedToCraftsman != null && userId == fixDocument.AssignedToCraftsman.Id) || fixDocument.EntityId == userId.ToString()));
+
+      while (currentContinuationToken != null)
+      {
+        var (fixDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixDocument>(string.IsNullOrWhiteSpace(currentContinuationToken) ? null : currentContinuationToken, cancellationToken, expression);
+        
+        currentContinuationToken = continuationToken;
+        if (fixDocumentCollection.IsOperationSuccessful && fixDocumentCollection.Results != null && fixDocumentCollection.Results.Any())
+        {
+          var timeLogResults = fixDocumentCollection.Results.Select(item => _mapper.Map<FixDocument, FixResponseDto>(item)).ToList();
+          fixResponses.AddRange(timeLogResults);
+        }
+      }
+
+      return fixResponses; 
+    }
+
     /// <summary>
     /// Currently, GetFixCostAsync does not operate as intended.
     /// Its purpose was to Get the different FixCost (ClientEstimatedCost, SystemCalculatedCost, CraftsmanEstimatedCost) 
