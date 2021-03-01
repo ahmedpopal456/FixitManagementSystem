@@ -41,6 +41,8 @@ variable "cosmosdb_tables" {
   type = map(string)
   default = {
     fixes = "Fixes",
-    fixplans = "FixPlans"
+    fixplans = "FixPlans",
+    fixlocation = "FixLocation",
+    fixtags = "FixTags"
   }
 }
