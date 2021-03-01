@@ -1,7 +1,9 @@
 ﻿using Fixit.Core.Database.DataContracts;
+using Fixit.Core.DataContracts.Fixes.Enums;
 using Fixit.Core.DataContracts.Fixes.Operations.Requests;
 using Fixit.Core.DataContracts.Fixes.Operations.Responses;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,6 +32,13 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<FixResponseDto> GetFixAsync(Guid fixId, CancellationToken cancellationToken);
+    /// <summary>
+    /// Get all fixes for a given user
+    /// </summary>
+    /// <param name="fixId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IEnumerable<FixResponseDto>> GetFixesByUserAsync(Guid userId, CancellationToken cancellationToken, IEnumerable<FixStatuses> fixStatuses = null);
     /// <summary>
     /// Get Fix Cost
     /// </summary>
