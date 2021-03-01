@@ -1,10 +1,10 @@
 import unittest
 import pandas as pd
 import azure.functions as func
-from Helpers import SearchHelper as search
-from Mediator import FixSearchMediator as mediator
-from Helpers import RequestValidator as validate
-from Helpers import sqltest as sql
+from helpers import search_helper as search
+from mediator import fix_search_mediator as mediator
+from helpers import request_validator as validate
+from helpers import sql as sql
 from . import fake_data_provider as mock
 
 class TestFunction(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestFunction(unittest.TestCase):
         fake_sql_table = mock.get_mock_sql_data()
 
         # Call the function.
-        fix_templates = search.SearchMatching(fake_sql_table)
+        fix_templates = search.TemplateSearchMatching(fake_sql_table)
         result = fix_templates.get_results(request_param.get('keywords'))
 
         # Check the output.
@@ -43,7 +43,7 @@ class TestFunction(unittest.TestCase):
         fake_sql_table = mock.get_mock_sql_data()
 
         # Call the function.
-        fix_templates = search.SearchMatching(fake_sql_table)
+        fix_templates = search.TemplateSearchMatching(fake_sql_table)
         templates = fix_templates.get_results(request_param.get('keywords'))
         result = fix_templates.print_results()
 
@@ -96,10 +96,10 @@ class TestFunction(unittest.TestCase):
 
         # Call the function.
         db = sql.SqlDatabase(cs, request_param)
-        result = db.set_sql_filter()
+        result = db._set_sql_filter()
 
         # Check the output.
-        self.assertEqual(result, None)
+        self.assertEqual(result, '')
 
     def test_sql_set_filter_budget(self):
          # Construct a mock HTTP request.
@@ -115,7 +115,7 @@ class TestFunction(unittest.TestCase):
 
         # Call the function.
         db = sql.SqlDatabase(cs, request_param)
-        result = db.set_sql_filter()
+        result = db._set_sql_filter()
 
         # Check the output.
         self.assertEqual(result.strip(), budget_sql_filter.strip())
@@ -134,7 +134,7 @@ class TestFunction(unittest.TestCase):
 
         # Call the function.
         db = sql.SqlDatabase(cs, request_param)
-        result = db.set_sql_filter()
+        result = db._set_sql_filter()
 
         # Check the output.
         self.assertEqual(result.strip(), accessed_sql_filter.strip())
@@ -154,7 +154,7 @@ class TestFunction(unittest.TestCase):
         sql_filter =  f"WHERE {budget_sql_filter} AND {accessed_sql_filter}"
         # Call the function.
         db = sql.SqlDatabase(cs, request_param)
-        result = db.set_sql_filter()
+        result = db._set_sql_filter()
 
         # Check the output.
         self.assertEqual(result, sql_filter)
