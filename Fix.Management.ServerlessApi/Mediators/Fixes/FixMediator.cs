@@ -181,11 +181,13 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
         throw new ArgumentNullException(nameof(userId));
       }
 
+      fixStatuses ??= new List<FixStatuses>();
+
       string currentContinuationToken = "";
       var fixResponses = new List<FixResponseDto>();
 
-      Expression<Func<FixDocument, bool>> expression = fixDocument => ((fixStatuses == null || !fixStatuses.Any()) || (fixStatuses.Contains(fixDocument.Status)) &&
-                                                                      ((fixDocument.AssignedToCraftsman != null && userId == fixDocument.AssignedToCraftsman.Id) || fixDocument.EntityId == userId.ToString()));
+      Expression<Func<FixDocument, bool>> expression = fixDocument => (fixStatuses.Count() <= 0 || (fixStatuses.Contains(fixDocument.Status))) &&
+                                                                      ((fixDocument.AssignedToCraftsman != null && userId == fixDocument.AssignedToCraftsman.Id) || fixDocument.EntityId == userId.ToString());
 
       while (currentContinuationToken != null)
       {
