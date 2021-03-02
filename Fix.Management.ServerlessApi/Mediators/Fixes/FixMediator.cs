@@ -184,7 +184,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
       string currentContinuationToken = "";
       var fixResponses = new List<FixResponseDto>();
 
-      Expression<Func<FixDocument, bool>> expression = fixDocument => (fixStatuses == null || (fixStatuses.Contains(fixDocument.Status)) &&
+      Expression<Func<FixDocument, bool>> expression = fixDocument => ((fixStatuses == null || !fixStatuses.Any()) || (fixStatuses.Contains(fixDocument.Status)) &&
                                                                       ((fixDocument.AssignedToCraftsman != null && userId == fixDocument.AssignedToCraftsman.Id) || fixDocument.EntityId == userId.ToString()));
 
       while (currentContinuationToken != null)
