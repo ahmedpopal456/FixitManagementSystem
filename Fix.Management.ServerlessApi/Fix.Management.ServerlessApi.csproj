@@ -7,9 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Aliencube.AzureFunctions.Extensions.OpenApi" Version="3.1.1" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="Fixit.Core.Database" Version="1.0.15" />
-    <PackageReference Include="Fixit.Core.DataContracts" Version="1.0.105" />
-    <PackageReference Include="Fixit.Core.Storage" Version="1.0.20-beta" />
+    <PackageReference Include="Fixit.Core.Storage" Version="1.0.10-alpha" />
     <PackageReference Include="Fixit.Core.Security" Version="1.0.1-beta" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
@@ -20,6 +18,9 @@
     <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.23" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="3.0.9" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Fix.Management.Lib\Fix.Management.Lib.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

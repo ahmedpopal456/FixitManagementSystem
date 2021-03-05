@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using Fix.Management.ServerlessApi.Models.Document;
+using Fix.Management.Lib.Models.Document;
 using Fixit.Core.Database.DataContracts;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts.FixPlans;

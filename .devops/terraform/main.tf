@@ -59,11 +59,14 @@ resource "azurerm_function_app" "main" {
     "WEBSITE_NODE_DEFAULT_VERSION"    = "10.14.1"
     "FUNCTIONS_WORKER_RUNTIME"        = "dotnet",
 
-    "FIXIT-FMS-DB-EP"               = data.azurerm_cosmosdb_account.main.endpoint,
-    "FIXIT-FMS-DB-KEY"              = data.azurerm_cosmosdb_account.main.primary_key,
-    "FIXIT-FMS-DB-NAME"             = azurerm_cosmosdb_sql_database.main.name,
-    "FIXIT-FMS-DB-FIXTABLE"         = azurerm_cosmosdb_sql_container.main["fixes"].name,
-    "FIXIT-FMS-DB-FIXPLANTABLENAME" = azurerm_cosmosdb_sql_container.main["fixplans"].name,
+    "FIXIT-FMS-DB-EP"                   = data.azurerm_cosmosdb_account.main.endpoint,
+    "FIXIT-FMS-DB-KEY"                  = data.azurerm_cosmosdb_account.main.primary_key,
+    "FIXIT-FMS-DB-CS"                   = data.azurerm_cosmosdb_account.main.connection_strings[0],
+    "FIXIT-FMS-DB-NAME"                 = azurerm_cosmosdb_sql_database.main.name,
+    "FIXIT-FMS-DB-FIXTABLE"             = azurerm_cosmosdb_sql_container.main["fixes"].name,
+    "FIXIT-FMS-DB-FIXPLANTABLENAME"     = azurerm_cosmosdb_sql_container.main["fixplans"].name,
+    "FIXIT-FMS-DB-FIXLOCATIONTABLENAME" = azurerm_cosmosdb_sql_container.main["fixlocation"].name,
+    "FIXIT-FMS-DB-FIXTAGTABLENAME"      = azurerm_cosmosdb_sql_container.main["fixtags"].name,
 
     "FIXIT-FMS-QUEUE-EP"           = "https://${azurerm_storage_account.main.name}.queue.core.windows.net/${azurerm_storage_queue.main.name}",
     "FIXIT-FMS-STORAGEACCOUNT-CS"  = azurerm_storage_account.main.primary_connection_string,

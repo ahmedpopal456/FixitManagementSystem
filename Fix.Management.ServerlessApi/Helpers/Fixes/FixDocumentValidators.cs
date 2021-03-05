@@ -1,4 +1,4 @@
-﻿using Fix.Management.ServerlessApi.Models.Document;
+﻿using Fix.Management.Lib.Models.Document;
 using Fixit.Core.Database.DataContracts.Documents;
 
 namespace Fix.Management.ServerlessApi.Helpers.Fixes

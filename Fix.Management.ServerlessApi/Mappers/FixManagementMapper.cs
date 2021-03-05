@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Fixit.Core.DataContracts.Fixes.Operations.Requests;
 using Fixit.Core.DataContracts.Fixes.Operations.Responses;
-using Fix.Management.ServerlessApi.Models.Document;
+using Fix.Management.Lib.Models.Document;
 
 namespace Fix.Management.ServerlessApi.Mappers
 {

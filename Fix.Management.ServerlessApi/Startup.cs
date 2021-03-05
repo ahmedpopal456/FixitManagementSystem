@@ -10,6 +10,9 @@ using Fix.Management.ServerlessApi.Mediators.Fixes;
 using Fix.Management.ServerlessApi;
 using Fixit.Core.Storage;
 using Fixit.Core.Storage.Queue.Mediators;
+using Fix.Management.ServerlessApi.Mediators.FixLocations;
+using Fix.Management.ServerlessApi.Mediators;
+using Fix.Management.ServerlessApi.Mediators.FixTag;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace Fix.Management.ServerlessApi
@@ -28,6 +31,8 @@ namespace Fix.Management.ServerlessApi
       {
         mc.AddProfile(new FixManagementMapper());
         mc.AddProfile(new FixPlanManagementMapper());
+        mc.AddProfile(new OnFixCreateUpdateMapper());
+
       });
 
       DatabaseFactory factory = new DatabaseFactory(_configuration["FIXIT-FMS-DB-EP"], _configuration["FIXIT-FMS-DB-KEY"]);
@@ -53,6 +58,24 @@ namespace Fix.Management.ServerlessApi
         var configuration = provider.GetService<IConfiguration>();
 
         return new FixPlanMediator(mapper, configuration, databaseMediator);
+      });
+      
+      builder.Services.AddSingleton<IFixLocationMediator, FixLocationMediator>(provider =>
+      {
+        var mapper = provider.GetService<IMapper>();
+        var databaseMediator = provider.GetService<IDatabaseMediator>();
+        var configuration = provider.GetService<IConfiguration>();
+
+        return new FixLocationMediator(mapper, configuration, databaseMediator);
+      });
+
+      builder.Services.AddSingleton<IFixTagMediator, FixTagMediator>(provider =>
+      {
+        var mapper = provider.GetService<IMapper>();
+        var databaseMediator = provider.GetService<IDatabaseMediator>();
+        var configuration = provider.GetService<IConfiguration>();
+
+        return new FixTagMediator(mapper, configuration, databaseMediator);
       });
 
       builder.Services.AddTransient<IDatabaseMediator>(configurationProvider =>

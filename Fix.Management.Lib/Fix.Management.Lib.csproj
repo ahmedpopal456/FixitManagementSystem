@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fixit.Core.Database" Version="1.0.15" />
+    <PackageReference Include="Fixit.Core.DataContracts" Version="1.0.39-alpha" />
+  </ItemGroup>
+
+</Project>

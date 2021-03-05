@@ -5,8 +5,8 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper.Configuration;
+using Fix.Management.Lib.Models.Document;
 using Fix.Management.ServerlessApi.Mediators.FixPlans;
-using Fix.Management.ServerlessApi.Models.Document;
 using Fixit.Core.Database.DataContracts;
 using Fixit.Core.Database.DataContracts.Documents;
 using Fixit.Core.Database.Mediators;
@@ -38,17 +38,11 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
       _databaseTableMediator = new Mock<IDatabaseTableMediator>();
       _databaseTableEntityMediator = new Mock<IDatabaseTableEntityMediator>();
 
-      var fakeFixPlanDocumentSeeder = _fakeDtoSeedFactory.CreateFakeSeeder<FixPlanDocument>();
-      var fakeFixPlanRequestDtoSeeder = _fakeDtoSeedFactory.CreateFakeSeeder<FixPlanCreateRequestDto>();
-      var fakeFixPlanUpdateRequestDtoSeeder = _fakeDtoSeedFactory.CreateFakeSeeder<FixPlanUpdateRequestDto>();
-      var fakeFixPlanPhaseRequestDtoSeeder = _fakeDtoSeedFactory.CreateFakeSeeder<FixPhaseStatusUpdateRequestDto>();
-      var fakeFixPlanPhaseTaskRequestDtoSeeder = _fakeDtoSeedFactory.CreateFakeSeeder<FixTaskStatusUpdateRequestDto>();
-
-      _fakeFixPlan = fakeFixPlanDocumentSeeder.SeedFakeDtos();
-      _fakeFixPlanRequestDtoSeeder = fakeFixPlanRequestDtoSeeder.SeedFakeDtos();
-      _fakeFixPlanUpdateRequestDtoSeeder = fakeFixPlanUpdateRequestDtoSeeder.SeedFakeDtos();
-      _fakeFixPlanPhaseRequestDtoSeeder = fakeFixPlanPhaseRequestDtoSeeder.SeedFakeDtos();
-      _fakeFixPlanPhaseTaskRequestDtoSeeder = fakeFixPlanPhaseTaskRequestDtoSeeder.SeedFakeDtos();
+      _fakeFixPlan = _fakeDtoSeedFactory.CreateSeederFactory<FixPlanDocument>(new FixPlanDocument());
+      _fakeFixPlanRequestDtoSeeder = _fakeDtoSeedFactory.CreateSeederFactory<FixPlanCreateRequestDto>(new FixPlanCreateRequestDto());
+      _fakeFixPlanUpdateRequestDtoSeeder = _fakeDtoSeedFactory.CreateSeederFactory<FixPlanUpdateRequestDto>(new FixPlanUpdateRequestDto());
+      _fakeFixPlanPhaseRequestDtoSeeder = _fakeDtoSeedFactory.CreateSeederFactory<FixPhaseStatusUpdateRequestDto>(new FixPhaseStatusUpdateRequestDto());
+      _fakeFixPlanPhaseTaskRequestDtoSeeder = _fakeDtoSeedFactory.CreateSeederFactory<FixTaskStatusUpdateRequestDto>(new FixTaskStatusUpdateRequestDto());
 
       _databaseMediator.Setup(databaseMediator => databaseMediator.GetDatabase(_fixPlanDatabasebName))
                       .Returns(_databaseTableMediator.Object);

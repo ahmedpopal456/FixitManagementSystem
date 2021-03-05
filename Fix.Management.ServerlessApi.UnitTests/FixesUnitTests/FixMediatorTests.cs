@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper.Configuration;
 using Fix.Management.ServerlessApi.Mediators.Fixes;
-using Fix.Management.ServerlessApi.Models.Document;
+using Fix.Management.Lib.Models.Document;
 using Fixit.Core.Database.DataContracts;
 using Fixit.Core.Database.DataContracts.Documents;
 using Fixit.Core.Database.Mediators;
@@ -47,18 +47,12 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       _queueStorageMediator = new Mock<IQueueServiceClientMediator>();
       _queueStorageEntityMediator = new Mock<IQueueClientMediator>();
 
-      // Create Seeders
-      var fakeFixDocumentSeeder = _fakeDtoSeedFactory.CreateFakeSeeder<FixDocument>();
-      var fakeFixCreateRequestDtoSeeder = _fakeDtoSeedFactory.CreateFakeSeeder<FixCreateRequestDto>();
-      var fakeFixUpdateRequestDtoSeeder = _fakeDtoSeedFactory.CreateFakeSeeder<FixUpdateRequestDto>();
-      var fakeFixUpdateAssignRequestDtoSeeder = _fakeDtoSeedFactory.CreateFakeSeeder<FixUpdateAssignRequestDto>();
-
-
       // Create fake data objects
-      _fakeFixDocuments = fakeFixDocumentSeeder.SeedFakeDtos();
-      _fakeFixCreateRequestDtos = fakeFixCreateRequestDtoSeeder.SeedFakeDtos();
-      _fakeFixUpdateRequestDtos = fakeFixUpdateRequestDtoSeeder.SeedFakeDtos();
-      _fakeFixUpdateAssignRequestDtos = fakeFixUpdateAssignRequestDtoSeeder.SeedFakeDtos();
+      _fakeFixDocuments = _fakeDtoSeedFactory.CreateSeederFactory<FixDocument>(new FixDocument());
+      _fakeFixCreateRequestDtos = _fakeDtoSeedFactory.CreateSeederFactory<FixCreateRequestDto>(new FixCreateRequestDto());
+      _fakeFixUpdateRequestDtos = _fakeDtoSeedFactory.CreateSeederFactory<FixUpdateRequestDto>(new FixUpdateRequestDto());
+      _fakeFixUpdateAssignRequestDtos = _fakeDtoSeedFactory.CreateSeederFactory<FixUpdateAssignRequestDto>(new FixUpdateAssignRequestDto());
+
 
       _databaseMediator.Setup(databaseMediator => databaseMediator.GetDatabase(_fixDatabasebName))
                       .Returns(_databaseTableMediator.Object);

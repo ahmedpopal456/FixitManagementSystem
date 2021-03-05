@@ -1,19 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using Fix.Management.ServerlessApi.Models.Document;
+using System.Runtime.Serialization;
+using Fixit.Core.Database;
+using Fixit.Core.DataContracts.Fixes.Details;
+using Fixit.Core.DataContracts.Fixes.Tags;
 using Fixit.Core.DataContracts.FixPlans.BillingDetails;
 using Fixit.Core.DataContracts.FixPlans.Enums;
 using Fixit.Core.DataContracts.FixPlans.Phases;
 using Fixit.Core.DataContracts.FixPlans.Phases.Enums;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks.Enums;
-using Fixit.Core.DataContracts;
+using Fixit.Core.DataContracts.Seeders;
 using Fixit.Core.DataContracts.Users;
 
-namespace Fix.Management.ServerlessApi.FakeDataProviders.Adapters.Internal.FixPlans
+namespace Fix.Management.Lib.Models.Document
 {
-  public class FakeFixPlanSeeder : IFakeSeederAdapter<FixPlanDocument>
+  [DataContract]
+  public class FixPlanDocument : DocumentBase, IFakeSeederAdapter<FixPlanDocument>
   {
+    [DataMember]
+    public Guid FixId { get; set; }
+
+    [DataMember]
+    public long CreatedTimestampUtc { get; set; }
+
+    [DataMember]
+    public long UpdatedTimestampUtc { get; set; }
+
+    [DataMember]
+    public bool IsBookmarked { get; set; }
+
+    [DataMember]
+    public FixPlanProposalStates ProposalState { get; set; }
+
+    [DataMember]
+    public float TotalCost { get; set; }
+
+    [DataMember]
+    public Guid ActivePhaseId { get; set; }
+
+    [DataMember]
+    public FixPlanBillingDetailsDto BillingDetails { get; set; }
+
+    [DataMember]
+    public IEnumerable<FixPhaseDto> Phases { get; set; }
+
+    [DataMember]
+    public UserSummaryDto CreatedByCraftsman { get; set; }
+
     public IList<FixPlanDocument> SeedFakeDtos()
     {
       FixPlanDocument firstFixPlan = new FixPlanDocument

@@ -1,4 +1,4 @@
-﻿using Fix.Management.ServerlessApi.Models.Document;
+﻿using Fix.Management.Lib.Models.Document;
 using Fixit.Core.Database.DataContracts;
 using Fixit.Core.Database.DataContracts.Documents;
 using Fixit.Core.DataContracts.Fixes.Operations.Responses;
