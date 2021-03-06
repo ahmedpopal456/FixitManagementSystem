@@ -89,7 +89,6 @@ namespace Fixit.FixManagement.ServerlessApi.Helpers.Fixes
         if (fixDeserialized != null &&
           fixDeserialized.Tags != null && !IsNotValidTagsDto(fixDeserialized.Tags) &&
           fixDeserialized.Details != null && !IsNotValidDetailsDto(fixDeserialized.Details) &&
-          fixDeserialized.Images != null && !IsNotValidImageDto(fixDeserialized.Images) &&
           fixDeserialized.Location != null && !IsNotValidLocationDto(fixDeserialized.Location) &&
           fixDeserialized.CreatedByClient != null && !IsNotValidUserSummaryDto(fixDeserialized.CreatedByClient) &&
           fixDeserialized.UpdatedByUser != null && !IsNotValidUserSummaryDto(fixDeserialized.UpdatedByUser)
@@ -121,7 +120,6 @@ namespace Fixit.FixManagement.ServerlessApi.Helpers.Fixes
         if (fixDeserialized != null &&
           fixDeserialized.Tags != null && !IsNotValidTagsDto(fixDeserialized.Tags) &&
           fixDeserialized.Details != null && !IsNotValidDetailsDto(fixDeserialized.Details) &&
-          fixDeserialized.Images != null && !IsNotValidImageDto(fixDeserialized.Images) &&
           fixDeserialized.Location != null && !IsNotValidLocationDto(fixDeserialized.Location) &&
           fixDeserialized.UpdatedByUser != null && !IsNotValidUserSummaryDto(fixDeserialized.UpdatedByUser))
         {

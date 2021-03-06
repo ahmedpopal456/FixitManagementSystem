@@ -25,6 +25,7 @@ namespace Fix.Management.ServerlessApi.Mappers
         .ForMember(fix => fix.UpdatedTimestampUtc, opts => opts.MapFrom(dto => dto.UpdatedTimestampUtc))
         .ForMember(fix => fix.UpdatedByUser, opts => opts.MapFrom(dto => dto.UpdatedByUser))
         .ForMember(fix => fix.Status, opts => opts.MapFrom(dto => dto.Status))
+        .ForMember(fix => fix.Id, opts => opts.MapFrom(dto => dto.id))
         .ReverseMap();
 
       // Create Fixes Request
@@ -72,6 +73,7 @@ namespace Fix.Management.ServerlessApi.Mappers
         .ForMember(fix => fix.ClientEstimatedCost, opts => opts.MapFrom(dto => dto.ClientEstimatedCost))
         .ForMember(fix => fix.SystemCalculatedCost, opts => opts.MapFrom(dto => dto.SystemCalculatedCost))
         .ForMember(fix => fix.CraftsmanEstimatedCost, opts => opts.MapFrom(dto => dto.CraftsmanEstimatedCost))
+        .ForMember(fix => fix.Id, opts => opts.MapFrom(dto => dto.id))
         .ReverseMap();
     }
   }

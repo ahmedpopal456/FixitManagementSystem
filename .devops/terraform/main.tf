@@ -61,7 +61,7 @@ resource "azurerm_function_app" "main" {
 
     "FIXIT-FMS-DB-EP"                   = data.azurerm_cosmosdb_account.main.endpoint,
     "FIXIT-FMS-DB-KEY"                  = data.azurerm_cosmosdb_account.main.primary_key,
-    "FIXIT-FMS-DB-CS"                   = data.azurerm_cosmosdb_account.main.connection_strings[0],
+    "FIXIT-FMS-DB-CS"                   = "AccountEndpoint=${data.azurerm_cosmosdb_account.main.endpoint};AccountKey=${data.azurerm_cosmosdb_account.main.primary_key};",
     "FIXIT-FMS-DB-NAME"                 = azurerm_cosmosdb_sql_database.main.name,
     "FIXIT-FMS-DB-FIXTABLE"             = azurerm_cosmosdb_sql_container.main["fixes"].name,
     "FIXIT-FMS-DB-FIXPLANTABLENAME"     = azurerm_cosmosdb_sql_container.main["fixplans"].name,
