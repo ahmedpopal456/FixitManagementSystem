@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Fix.Management.ServerlessApi.Mediators.FixLocations;
 using Fix.Management.Lib.Models.Document;
-using Fixit.Core.Database.DataContracts;
+using Fixit.Core.DataContracts;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts.Fixes.Locations;
 using Microsoft.Extensions.Configuration;
@@ -94,7 +94,7 @@ namespace Fix.Management.ServerlessApi.Mediators
         fixLocationResults.City = fixLocationDocument.City;
         fixLocationResults.Province = fixLocationDocument.Province;
         fixLocationResults.LastUsedTimeStampUtc = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
-        result = await _databaseFixLocationTable.UpdateItemAsync(fixLocationResults, fixDocument.EntityId, cancellationToken);
+        result = await _databaseFixLocationTable.UpsertItemAsync(fixLocationResults, fixDocument.EntityId, cancellationToken);
       }
       else
       {

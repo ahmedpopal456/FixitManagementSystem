@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Fixit.Core.Database.DataContracts;
+using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.FixPlans;
 using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
 using Fixit.Core.DataContracts.FixPlans.Phases;

@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 using AutoMapper.Configuration;
 using Fix.Management.ServerlessApi.Mediators.Fixes;
 using Fix.Management.Lib.Models.Document;
-using Fixit.Core.Database.DataContracts;
 using Fixit.Core.Database.DataContracts.Documents;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts.Fixes.Operations.Requests;
 using Fixit.Core.Storage.Queue.Mediators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-
+using Fixit.Core.DataContracts;
 
 namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 {
@@ -34,6 +33,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
     private readonly string _fixDatabasebName = "TestDatabaseName";
     private readonly string _fixDataTableName = "TestTableName";
     private readonly string _fixQueueStorageName = "TestQueueName";
+    private readonly string _chatQueueStorageName = "TestQueueName";
 
     #region TestInitialize
     [TestInitialize]
@@ -46,6 +46,8 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       _databaseTableEntityMediator = new Mock<IDatabaseTableEntityMediator>();
       _queueStorageMediator = new Mock<IQueueServiceClientMediator>();
       _queueStorageEntityMediator = new Mock<IQueueClientMediator>();
+      _chatQueueStorageMediator = new Mock<IQueueServiceClientMediator>();
+      _chatQueueStorageEntityMediator = new Mock<IQueueClientMediator>();
 
       // Create fake data objects
       _fakeFixDocuments = _fakeDtoSeedFactory.CreateSeederFactory<FixDocument>(new FixDocument());
@@ -60,13 +62,17 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
                             .Returns(_databaseTableEntityMediator.Object);
       _queueStorageMediator.Setup(queueStorageMediator => queueStorageMediator.GetQueueClient(_fixQueueStorageName))
                             .Returns(_queueStorageEntityMediator.Object);
+      _chatQueueStorageMediator.Setup(queueStorageMediator => queueStorageMediator.GetQueueClient(_chatQueueStorageName))
+                               .Returns(_chatQueueStorageEntityMediator.Object);
 
       _fixMediator = new FixMediator(_mapperConfiguration.CreateMapper(),
                                      _queueStorageMediator.Object,
+                                     _chatQueueStorageMediator.Object,
                                      _databaseMediator.Object,
                                      _fixDatabasebName,
                                      _fixDataTableName,
-                                     _fixQueueStorageName);
+                                     _fixQueueStorageName,
+                                     _chatQueueStorageName);
     }
     #endregion
 
@@ -86,7 +92,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       };
 
       var operationStatus = new OperationStatus() { IsOperationSuccessful = true };
-      var queueResponse = new Fixit.Core.DataContracts.OperationStatus() { IsOperationSuccessful = true };
+      var queueResponse = new OperationStatus() { IsOperationSuccessful = true };
       var fixCreateRequestDto = _fakeFixCreateRequestDtos.First();
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.CreateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -114,7 +120,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       };
 
       var operationStatus = new OperationStatus() { IsOperationSuccessful = true };
-      var queueResponse = new Fixit.Core.DataContracts.OperationStatus()
+      var queueResponse = new OperationStatus()
       {
         IsOperationSuccessful = false,
         OperationException = new Exception()
@@ -146,7 +152,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       };
 
       var operationStatus = new OperationStatus() { IsOperationSuccessful = true };
-      var queueResponse = new Fixit.Core.DataContracts.OperationStatus() { IsOperationSuccessful = true };
+      var queueResponse = new OperationStatus() { IsOperationSuccessful = true };
       var fixCreateRequestDto = _fakeFixCreateRequestDtos.First();
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.CreateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(documentCollection);
@@ -184,7 +190,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       //Act
@@ -215,7 +221,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       //Act
@@ -245,7 +251,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       //Act
@@ -277,7 +283,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       //Act
@@ -305,7 +311,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       //Act
@@ -343,8 +349,10 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
+      _chatQueueStorageEntityMediator.Setup(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()))
+                                 .ReturnsAsync(operationStatus);
 
       //Act
       var actionResult = await _fixMediator.UpdateFixAssignAsync(fixIdGuid, fixUpdateAssignRequestDto, cancellationToken);
@@ -353,6 +361,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       Assert.IsNotNull(actionResult);
       Assert.IsFalse(actionResult.IsOperationSuccessful);
       Assert.IsNotNull(actionResult.OperationException);
+      _chatQueueStorageEntityMediator.Verify(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()), Times.Never());
     }
 
     [TestMethod]
@@ -374,8 +383,10 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
+      _chatQueueStorageEntityMediator.Setup(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()))
+                                 .ReturnsAsync(operationStatus);
 
       //Act
       var actionResult = await _fixMediator.UpdateFixAssignAsync(fixIdGuid, fixUpdateAssignRequestDto, cancellationToken);
@@ -384,6 +395,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       Assert.IsNotNull(actionResult);
       Assert.IsFalse(actionResult.IsOperationSuccessful);
       Assert.IsNotNull(actionResult.OperationException);
+      _chatQueueStorageEntityMediator.Verify(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()), Times.Never());
     }
 
     [TestMethod]
@@ -404,14 +416,17 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
+      _chatQueueStorageEntityMediator.Setup(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()))
+                                 .ReturnsAsync(operationStatus);
 
       //Act
       var actionResult = await _fixMediator.UpdateFixAssignAsync(fixIdGuid, fixUpdateAssignRequestDto, cancellationToken);
 
       //Assert
       Assert.IsNull(actionResult);
+      _chatQueueStorageEntityMediator.Verify(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()), Times.Never());
     }
 
     [TestMethod]
@@ -436,14 +451,17 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
+      _chatQueueStorageEntityMediator.Setup(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()))
+                                 .ReturnsAsync(operationStatus);
 
       //Act
       var actionResult = await _fixMediator.UpdateFixAssignAsync(fixIdGuid, fixUpdateAssignRequestDto, cancellationToken);
 
       //Assert
       Assert.IsNull(actionResult);
+      _chatQueueStorageEntityMediator.Verify(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()), Times.Never());
     }
 
     [TestMethod]
@@ -464,8 +482,10 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
+      _chatQueueStorageEntityMediator.Setup(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()))
+                                 .ReturnsAsync(operationStatus);
 
       //Act
       var actionResult = await _fixMediator.UpdateFixAssignAsync(fixIdGuid, fixUpdateAssignRequestDto, cancellationToken);
@@ -479,6 +499,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       Assert.AreEqual(fixUpdateAssignRequestDto.SystemCalculatedCost, actionResult.SystemCalculatedCost);
       Assert.AreEqual(fixUpdateAssignRequestDto.CraftsmanEstimatedCost, actionResult.CraftsmanEstimatedCost);
       Assert.AreEqual(fixUpdateAssignRequestDto.UpdatedByUser, actionResult.UpdatedByUser);
+      _chatQueueStorageEntityMediator.Verify(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()), Times.Once());
     }
     #endregion
 
@@ -680,6 +701,8 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       _databaseTableEntityMediator.Reset();
       _queueStorageMediator.Reset();
       _queueStorageEntityMediator.Reset();
+      _chatQueueStorageMediator.Reset();
+      _chatQueueStorageEntityMediator.Reset();
 
       // Clean-up data objects
       _fakeFixDocuments = null;

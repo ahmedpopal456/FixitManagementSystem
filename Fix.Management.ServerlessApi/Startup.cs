@@ -37,17 +37,19 @@ namespace Fix.Management.ServerlessApi
 
       DatabaseFactory factory = new DatabaseFactory(_configuration["FIXIT-FMS-DB-EP"], _configuration["FIXIT-FMS-DB-KEY"]);
       StorageFactory storageFactory = new StorageFactory(_configuration["FIXIT-FMS-STORAGEACCOUNT-CS"]);
+      StorageFactory chatStorageFactory = new StorageFactory(_configuration["FIXIT-CMS-STORAGEACCOUNT-CS"]);
 
       builder.Services.AddSingleton<IMapper>(mapperConfig.CreateMapper());
       builder.Services.AddSingleton<IDatabaseMediator>(factory.CreateCosmosClient());
-      builder.Services.AddSingleton<IQueueServiceClientMediator>(storageFactory.CreateQueueServiceClientMediator());
       builder.Services.AddSingleton<IFixMediator, FixMediator>(provider =>
       {
         var mapper = provider.GetService<IMapper>();
         var databaseMediator = provider.GetService<IDatabaseMediator>();
-        var queueMediator = provider.GetService<IQueueServiceClientMediator>();
         var configuration = provider.GetService<IConfiguration>();
-        return new FixMediator(mapper, configuration, queueMediator, databaseMediator);
+        var queueMediator = storageFactory.CreateQueueServiceClientMediator();
+        var chatQueueMediator = chatStorageFactory.CreateQueueServiceClientMediator();
+
+        return new FixMediator(mapper, configuration, queueMediator, chatQueueMediator, databaseMediator);
       });
 
 

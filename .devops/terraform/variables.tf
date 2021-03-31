@@ -46,3 +46,9 @@ variable "cosmosdb_tables" {
     fixtags = "FixTags"
   }
 }
+
+/* This value needs to be defined in the respective environment's tfvars file. The value must be defined manually 
+for any new environment to reduce any dependencies on other services for the deployment. */
+variable "cms_connection_string" {
+  type = string
+}

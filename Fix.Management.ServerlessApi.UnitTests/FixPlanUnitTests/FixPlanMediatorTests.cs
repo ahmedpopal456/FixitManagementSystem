@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper.Configuration;
 using Fix.Management.Lib.Models.Document;
 using Fix.Management.ServerlessApi.Mediators.FixPlans;
-using Fixit.Core.Database.DataContracts;
+using Fixit.Core.DataContracts;
 using Fixit.Core.Database.DataContracts.Documents;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
@@ -124,7 +124,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixPlanDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixPlanDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
        var result = await _fixPlanMediator.UpdateFixPlanStructureAsync(fixPlanGuid, fixPlanUpdateRequestDto, cancellationToken);
@@ -155,7 +155,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixPlanDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixPlanDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       var result = await _fixPlanMediator.UpdateFixPlanStructureAsync(fixPlanGuid, fixPlanUpdateRequestDto, cancellationToken);
@@ -188,7 +188,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixPlanDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixPlanDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       var result = await _fixPlanMediator.UpdateFixPlanPhaseStatusAsync(fixPlanGuid, fixPhaseGuid, fixPlanUpdateRequestDto, cancellationToken);
@@ -223,7 +223,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixPlanDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixPlanDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       var result =await _fixPlanMediator.UpdateFixPlanPhaseStatusAsync(fixPlanGuid, fixPhaseGuid, fixPlanUpdateRequestDto, cancellationToken);
@@ -259,7 +259,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixPlanDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixPlanDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       var result = await _fixPlanMediator.UpdateFixPlanTaskStatusAsync(fixPlanGuid, fixPhaseGuid, fixTaskGuid, fixPlanUpdateRequestDto, cancellationToken);
@@ -295,7 +295,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixPlanDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixPlanDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       var result = await _fixPlanMediator.UpdateFixPlanTaskStatusAsync(fixPlanGuid, fixPhaseGuid, fixTaskGuid, fixPlanUpdateRequestDto, cancellationToken);
@@ -326,7 +326,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixPlanDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixPlanDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       var result = await _fixPlanMediator.UpdateClientFixPlanProposalStatusAsync(fixPlanGuid, cancellationToken);
@@ -357,7 +357,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixPlanDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixPlanDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       var result = await _fixPlanMediator.UpdateClientFixPlanProposalStatusAsync(fixPlanGuid, cancellationToken);
@@ -389,7 +389,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixPlanDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixPlanDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       var result = await _fixPlanMediator.UpdateClientFixPlanPhaseStatusAsync(fixPlanGuid, phaseId, cancellationToken);
@@ -423,7 +423,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixPlanUnitTests
 
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.GetItemQueryableAsync<FixPlanDocument>(continuationToken, It.IsAny<CancellationToken>(), It.IsAny<Expression<Func<FixPlanDocument, bool>>>(), null))
                                   .ReturnsAsync((documentCollection, continuationToken));
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpdateItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.UpsertItemAsync(It.IsAny<FixPlanDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(operationStatus);
 
       var result = await _fixPlanMediator.UpdateClientFixPlanPhaseStatusAsync(fixPlanGuid, phaseId, cancellationToken);

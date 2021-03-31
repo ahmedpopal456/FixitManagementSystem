@@ -26,6 +26,8 @@ namespace Fix.Management.ServerlessApi.UnitTests
     //Queue Storage Mock
     protected Mock<IQueueServiceClientMediator> _queueStorageMediator;
     protected Mock<IQueueClientMediator> _queueStorageEntityMediator;
+    protected Mock<IQueueServiceClientMediator> _chatQueueStorageMediator;
+    protected Mock<IQueueClientMediator> _chatQueueStorageEntityMediator;
 
     // Mapper
     protected MapperConfiguration _mapperConfiguration = new MapperConfiguration(config =>

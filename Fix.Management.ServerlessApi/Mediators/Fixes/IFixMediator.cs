@@ -1,4 +1,4 @@
-﻿using Fixit.Core.Database.DataContracts;
+﻿using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Fixes.Enums;
 using Fixit.Core.DataContracts.Fixes.Operations.Requests;
 using Fixit.Core.DataContracts.Fixes.Operations.Responses;

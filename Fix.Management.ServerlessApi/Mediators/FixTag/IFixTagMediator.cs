@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Fix.Management.Lib.Models.Document;
-using Fixit.Core.Database.DataContracts;
+using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Fixes.Tags;
 
 namespace Fix.Management.ServerlessApi.Mediators.FixTag

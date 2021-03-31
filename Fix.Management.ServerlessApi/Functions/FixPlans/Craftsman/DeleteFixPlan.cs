@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Aliencube.AzureFunctions.Extensions.OpenApi.Core.Attributes;
 using AutoMapper;
 using Fix.Management.ServerlessApi.Mediators.FixPlans;
-using Fixit.Core.Database.DataContracts;
+using Fixit.Core.DataContracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;

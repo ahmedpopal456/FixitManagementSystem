@@ -1,5 +1,5 @@
 ﻿using Fix.Management.Lib.Models.Document;
-using Fixit.Core.Database.DataContracts;
+using Fixit.Core.DataContracts;
 using Fixit.Core.Database.DataContracts.Documents;
 using Fixit.Core.DataContracts.Fixes.Operations.Responses;
 
@@ -25,7 +25,7 @@ namespace Fix.Management.ServerlessApi.Helpers.Fixes
       return result;
     }
 
-    public static FixResponseDto MapResponseStatus(FixResponseDto result, Fixit.Core.DataContracts.OperationStatus response)
+    public static FixResponseDto MapResponseStatus(FixResponseDto result, OperationStatus response)
     {
       result.OperationException = response.OperationException;
       result.OperationMessage = response.OperationMessage;
@@ -42,16 +42,5 @@ namespace Fix.Management.ServerlessApi.Helpers.Fixes
 
       return result;
     }
-
-    public static FixResponseDto MapResponseStatus(FixResponseDto result, OperationStatus response)
-    {
-      result.OperationException = response.OperationException;
-      result.OperationMessage = response.OperationMessage;
-      result.IsOperationSuccessful = response.IsOperationSuccessful;
-
-      return result;
-    }
-
-
   }
 }

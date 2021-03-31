@@ -72,6 +72,9 @@ resource "azurerm_function_app" "main" {
     "FIXIT-FMS-STORAGEACCOUNT-CS"  = azurerm_storage_account.main.primary_connection_string,
     "FIXIT-FMS-STORAGEACCOUNT-KEY" = azurerm_storage_account.main.primary_access_key,
     "FIXIT-FMS-QUEUE-NAME"         = azurerm_storage_queue.main.name
+
+    "FIXIT-CMS-STORAGEACCOUNT-CS" = var.cms_connection_string,
+    "FIXIT-CMS-QUEUE-NAME"        = "createconversationsqueue"
   }
 }
 

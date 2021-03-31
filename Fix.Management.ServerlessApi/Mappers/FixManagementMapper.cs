@@ -2,6 +2,9 @@
 using Fixit.Core.DataContracts.Fixes.Operations.Requests;
 using Fixit.Core.DataContracts.Fixes.Operations.Responses;
 using Fix.Management.Lib.Models.Document;
+using Fixit.Core.DataContracts.Chat;
+using System.Collections.Generic;
+using Fixit.Core.DataContracts.Users;
 
 namespace Fix.Management.ServerlessApi.Mappers
 {
@@ -75,6 +78,11 @@ namespace Fix.Management.ServerlessApi.Mappers
         .ForMember(fix => fix.CraftsmanEstimatedCost, opts => opts.MapFrom(dto => dto.CraftsmanEstimatedCost))
         .ForMember(fix => fix.Id, opts => opts.MapFrom(dto => dto.id))
         .ReverseMap();
+
+      // Conversation Create Request
+      CreateMap<FixResponseDto, ConversationCreateRequestDto>()
+        .ForMember(request => request.FixInstanceId, opts => opts.MapFrom(fix => fix.Id))
+        .ForMember(request => request.Participants, opts => opts.MapFrom(fix => new List<UserSummaryDto>() { fix.CreatedByClient, fix.AssignedToCraftsman }));
     }
   }
 }

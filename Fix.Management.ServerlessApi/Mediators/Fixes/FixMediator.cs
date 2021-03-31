@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Fix.Management.Lib.Models.Document;
 using Fix.Management.ServerlessApi.Helpers.Fixes;
-using Fixit.Core.Database.DataContracts;
+using Fixit.Core.DataContracts;
 using Fixit.Core.Database.Mediators;
+using Fixit.Core.DataContracts.Chat;
 using Fixit.Core.DataContracts.Fixes.Enums;
 using Fixit.Core.DataContracts.Fixes.Operations.Requests;
 using Fixit.Core.DataContracts.Fixes.Operations.Responses;
 using Fixit.Core.Storage.Queue.Mediators;
-using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
@@ -24,15 +25,18 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
     private readonly IMapper _mapper;
     private readonly IDatabaseTableEntityMediator _databaseFixTable;
     private readonly IQueueClientMediator _queueStorage;
+    private readonly IQueueClientMediator _chatQueueStorage;
 
     public FixMediator(IMapper mapper,
                        IConfiguration configurationProvider,
                        IQueueServiceClientMediator queueStorageMediator,
+                       IQueueServiceClientMediator chatQueueStorageMediator,
                        IDatabaseMediator databaseMediator)
     {
       var databaseName = configurationProvider["FIXIT-FMS-DB-NAME"];
       var databaseFixTableName = configurationProvider["FIXIT-FMS-DB-FIXTABLE"];
       var queueName = configurationProvider["FIXIT-FMS-QUEUE-NAME"];
+      var chatQueueName = configurationProvider["FIXIT-CMS-QUEUE-NAME"];
 
       if (string.IsNullOrWhiteSpace(databaseName))
       {
@@ -49,6 +53,11 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
         throw new ArgumentNullException($"{nameof(FixMediator)} expects the {nameof(configurationProvider)} to have defined the Fix Queue Storage as {{FIXIT-FMS-QUEUE-NAME}} ");
       }
 
+      if (string.IsNullOrWhiteSpace(chatQueueName))
+      {
+        throw new ArgumentNullException($"{nameof(FixMediator)} expects the {nameof(configurationProvider)} to have defined the Chat Queue Storage as {{FIXIT-CMS-QUEUE-NAME}} ");
+      }
+
       if (databaseMediator == null)
       {
         throw new ArgumentNullException($"{nameof(FixMediator)} expects a value for {nameof(databaseMediator)}... null argument was provided");
@@ -62,14 +71,17 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
       _mapper = mapper ?? throw new ArgumentNullException($"{nameof(FixMediator)} expects a value for {nameof(mapper)}... null argument was provided");
       _databaseFixTable = databaseMediator.GetDatabase(databaseName).GetContainer(databaseFixTableName);
       _queueStorage = queueStorageMediator.GetQueueClient(queueName);
+      _chatQueueStorage = chatQueueStorageMediator.GetQueueClient(chatQueueName);
     }
 
     public FixMediator(IMapper mapper,
                        IQueueServiceClientMediator queueStorageMediator,
+                       IQueueServiceClientMediator chatQueueStorageMediator,
                        IDatabaseMediator databaseMediator,
                        string databaseName,
                        string databaseFixTableName,
-                       string queueName)
+                       string queueName,
+                       string chatQueueName)
     {
 
       if (string.IsNullOrWhiteSpace(databaseName))
@@ -87,6 +99,11 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
         throw new ArgumentNullException($"{nameof(FixMediator)} expects the {nameof(queueName)} to have defined the Fix Queue Storage as {{FIXIT-FMS-QUEUE-NAME}} ");
       }
 
+      if (string.IsNullOrWhiteSpace(chatQueueName))
+      {
+        throw new ArgumentNullException($"{nameof(FixMediator)} expects the {nameof(chatQueueName)} to have defined the Chat Queue Storage as {{FIXIT-CMS-QUEUE-NAME}} ");
+      }
+
       if (databaseMediator == null)
       {
         throw new ArgumentNullException($"{nameof(FixMediator)} expects a value for {nameof(databaseMediator)}... null argument was provided");
@@ -100,6 +117,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
       _mapper = mapper ?? throw new ArgumentNullException($"{nameof(FixMediator)} expects a value for {nameof(mapper)}... null argument was provided");
       _databaseFixTable = databaseMediator.GetDatabase(databaseName).GetContainer(databaseFixTableName);
       _queueStorage = queueStorageMediator.GetQueueClient(queueName);
+      _chatQueueStorage = chatQueueStorageMediator.GetQueueClient(chatQueueName);
     }
 
     #region Create Fixes
@@ -248,7 +266,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
           fixDocument = _mapper.Map<FixUpdateRequestDto, FixDocument>(fixUpdateRequestDto, fixDocument);
           fixDocument.UpdatedTimestampUtc = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-          var operationStatus = await _databaseFixTable.UpdateItemAsync(fixDocument, fixDocument.EntityId, cancellationToken);  
+          var operationStatus = await _databaseFixTable.UpsertItemAsync(fixDocument, fixDocument.EntityId, cancellationToken);  
           
           result = operationStatus.IsOperationSuccessful ? _mapper.Map<FixDocument, FixResponseDto>(fixDocument) : default;
           result = result != null ? FixGetResponseStatusHelper.MapResponseStatus(result, operationStatus) : default;
@@ -263,24 +281,32 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
       cancellationToken.ThrowIfCancellationRequested();
       var result = new FixResponseDto();
       var (fixDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixDocument>(null, cancellationToken, fixDocument => fixDocument.id == fixId.ToString());
-      
-      if(fixDocumentCollection != null)
+
+      result = fixDocumentCollection != null && !fixDocumentCollection.IsOperationSuccessful ? FixGetResponseStatusHelper.MapResponseStatus(result, fixDocumentCollection) : default;
+      FixDocument fixDocument = fixDocumentCollection != null && fixDocumentCollection.IsOperationSuccessful ? fixDocumentCollection.Results.SingleOrDefault() : default;
+
+      if (fixDocument != null)
       {
-        result = !fixDocumentCollection.IsOperationSuccessful ? FixGetResponseStatusHelper.MapResponseStatus(result, fixDocumentCollection) : default;
+        fixDocument = _mapper.Map<FixUpdateAssignRequestDto, FixDocument>(fixUpdateAssignRequestDto, fixDocument);
+        fixDocument.UpdatedTimestampUtc = DateTimeOffset.Now.ToUnixTimeSeconds();
+        fixDocument.Status = FixStatuses.Pending;
 
-        FixDocument fixDocument = fixDocumentCollection.IsOperationSuccessful ? fixDocumentCollection.Results.SingleOrDefault() : default;
-        if (fixDocument != null)
+        var operationStatus = await _databaseFixTable.UpsertItemAsync(fixDocument, fixDocument.EntityId, cancellationToken);
+
+        result = operationStatus.IsOperationSuccessful ? _mapper.Map<FixDocument, FixResponseDto>(fixDocument) : result;
+        result = result != null ? FixGetResponseStatusHelper.MapResponseStatus(result, operationStatus) : default;
+
+        if (result != null && result.IsOperationSuccessful)
         {
-          fixDocument = _mapper.Map<FixUpdateAssignRequestDto, FixDocument>(fixUpdateAssignRequestDto, fixDocument);
-          fixDocument.UpdatedTimestampUtc = DateTimeOffset.Now.ToUnixTimeSeconds();
-          fixDocument.Status = FixStatuses.Pending;
+          var conversationCreateRequestDto = _mapper.Map<FixResponseDto, ConversationCreateRequestDto>(result);
 
-          var operationStatus = await _databaseFixTable.UpdateItemAsync(fixDocument, fixDocument.EntityId, cancellationToken);
+          string requestJson = JsonConvert.SerializeObject(conversationCreateRequestDto);
+          string base64EncodedRequest = Convert.ToBase64String(Encoding.UTF8.GetBytes(requestJson));
 
-          result = operationStatus.IsOperationSuccessful ? _mapper.Map<FixDocument, FixResponseDto>(fixDocument) : result;
-          result = result != null ? FixGetResponseStatusHelper.MapResponseStatus(result, operationStatus) : default;
+          await _chatQueueStorage.SendMessageAsync(base64EncodedRequest, null, null, cancellationToken);
         }
       }
+
 
       return result;
     }

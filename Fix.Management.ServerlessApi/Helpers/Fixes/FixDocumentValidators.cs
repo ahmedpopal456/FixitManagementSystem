@@ -1,5 +1,6 @@
 ﻿using Fix.Management.Lib.Models.Document;
 using Fixit.Core.Database.DataContracts.Documents;
+using Fixit.Core.DataContracts;
 
 namespace Fix.Management.ServerlessApi.Helpers.Fixes
 {
@@ -15,7 +16,7 @@ namespace Fix.Management.ServerlessApi.Helpers.Fixes
       return creationResponse != null && creationResponse.IsOperationSuccessful && creationResponse.Document != null;
     }
 
-    public static bool IsNotNullAndOperationSuccessful(Fixit.Core.DataContracts.OperationStatus queueResponse)
+    public static bool IsNotNullAndOperationSuccessful(OperationStatus queueResponse)
     {
       return queueResponse != null && queueResponse.IsOperationSuccessful;
     }

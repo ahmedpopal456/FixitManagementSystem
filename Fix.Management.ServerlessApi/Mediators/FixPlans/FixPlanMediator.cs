@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Fix.Management.Lib.Models.Document;
-using Fixit.Core.Database.DataContracts;
+using Fixit.Core.DataContracts;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts.FixPlans;
 using Fixit.Core.DataContracts.FixPlans.Enums;
@@ -195,7 +195,7 @@ namespace Fix.Management.ServerlessApi.Mediators.FixPlans
             //Change state back to Tentative
             fixPlanUpdateDocument.ProposalState = FixPlanProposalStates.Tentative;
 
-            var operationStatus = await _databaseFixTable.UpdateItemAsync(fixPlanUpdateDocument, fixPlanUpdateDocument.EntityId, cancellationToken);
+            var operationStatus = await _databaseFixTable.UpsertItemAsync(fixPlanUpdateDocument, fixPlanUpdateDocument.EntityId, cancellationToken);
 
             result = operationStatus.IsOperationSuccessful ? _mapper.Map<FixPlanDocument, FixPlanDto>(fixPlanUpdateDocument) : result;
             result.IsOperationSuccessful = operationStatus.IsOperationSuccessful;
@@ -232,7 +232,7 @@ namespace Fix.Management.ServerlessApi.Mediators.FixPlans
             {
               fixPlanPhaseToUpdate.Status = fixPhaseStatusUpdateRequestDto.Status;
             }
-            var operationStatus = await _databaseFixTable.UpdateItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
+            var operationStatus = await _databaseFixTable.UpsertItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
 
             result = operationStatus.IsOperationSuccessful ? fixPlanPhaseToUpdate : result;
             result.IsOperationSuccessful = operationStatus.IsOperationSuccessful;
@@ -268,7 +268,7 @@ namespace Fix.Management.ServerlessApi.Mediators.FixPlans
           fixPlanTaskToUpdate.Status = Enum.IsDefined(typeof(TaskStatuses), fixTaskStatusUpdateRequestDto.Status)
                                       && fixTaskStatusUpdateRequestDto.Status != TaskStatuses.Done ? fixTaskStatusUpdateRequestDto.Status : fixPlanTaskToUpdate.Status;
 
-          var operationStatus = await _databaseFixTable.UpdateItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
+          var operationStatus = await _databaseFixTable.UpsertItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
 
           result = operationStatus.IsOperationSuccessful ? fixPlanTaskToUpdate : result;
           result.IsOperationSuccessful = operationStatus.IsOperationSuccessful;
@@ -305,7 +305,7 @@ namespace Fix.Management.ServerlessApi.Mediators.FixPlans
             {
               fixUpdateDocument.ProposalState = FixPlanProposalStates.Approved;
             }
-            var operationStatus = await _databaseFixTable.UpdateItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
+            var operationStatus = await _databaseFixTable.UpsertItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
 
             result = operationStatus.IsOperationSuccessful ? _mapper.Map<FixPlanDocument, FixPlanDto>(fixUpdateDocument) : result;
             result.IsOperationSuccessful = operationStatus.IsOperationSuccessful;
@@ -340,7 +340,7 @@ namespace Fix.Management.ServerlessApi.Mediators.FixPlans
 
           fixPlanPhaseToUpdate.Status = fixPlanPhaseToUpdate.Status != PhaseStatuses.Done ? PhaseStatuses.Done : default;
 
-          var operationStatus = await _databaseFixTable.UpdateItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
+          var operationStatus = await _databaseFixTable.UpsertItemAsync(fixUpdateDocument, fixUpdateDocument.EntityId, cancellationToken);
 
           result = operationStatus.IsOperationSuccessful ? fixPlanPhaseToUpdate : result;
           result.IsOperationSuccessful = operationStatus?.IsOperationSuccessful ?? default;

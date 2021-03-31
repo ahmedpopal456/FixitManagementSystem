@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Fix.Management.Lib.Models.Document;
-using Fixit.Core.Database.DataContracts;
+using Fixit.Core.DataContracts;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts.Fixes.Tags;
 using Microsoft.Extensions.Configuration;
@@ -100,7 +100,7 @@ namespace Fix.Management.ServerlessApi.Mediators.FixTag
             {
               fixTagResults.Statistics.TotalFixesCount++;
             }
-            result = await _databaseFixTagTable.UpdateItemAsync(fixTagResults, fixDocument.EntityId, cancellationToken);
+            result = await _databaseFixTagTable.UpsertItemAsync(fixTagResults, fixDocument.EntityId, cancellationToken);
           }
           else
           {
