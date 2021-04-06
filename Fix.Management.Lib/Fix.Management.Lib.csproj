@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fixit.Core.Database" Version="1.0.26-alpha" />
-    <PackageReference Include="Fixit.Core.DataContracts" Version="1.0.63-alpha" />
+    <PackageReference Include="Fixit.Core.Database" Version="1.0.36-alpha" />
+    <PackageReference Include="Fixit.Core.DataContracts" Version="1.0.89-alpha" />
   </ItemGroup>
 
 </Project>

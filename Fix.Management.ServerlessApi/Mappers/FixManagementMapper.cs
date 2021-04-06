@@ -5,6 +5,7 @@ using Fix.Management.Lib.Models.Document;
 using Fixit.Core.DataContracts.Chat;
 using System.Collections.Generic;
 using Fixit.Core.DataContracts.Users;
+using Fixit.Core.DataContracts.Fixes.Enums;
 
 namespace Fix.Management.ServerlessApi.Mappers
 {
@@ -52,7 +53,7 @@ namespace Fix.Management.ServerlessApi.Mappers
         .ForMember(document => document.Images, opts => opts.MapFrom(dto => dto.Images))
         .ForMember(document => document.Location, opts => opts.MapFrom(dto => dto.Location))
         .ForMember(document => document.Schedule, opts => opts.MapFrom(dto => dto.Schedule))
-        .ForMember(document => document.ClientEstimatedCost, opts => opts.Ignore())
+        .ForMember(document => document.ClientEstimatedCost, opts => opts.Condition((dto, document, dtoClientEstimatedCost) => dtoClientEstimatedCost != null && document.Status == FixStatuses.New))
         .ForMember(document => document.SystemCalculatedCost, opts => opts.Ignore())
         .ForMember(document => document.CraftsmanEstimatedCost, opts => opts.Ignore())
         .ForMember(document => document.UpdatedByUser, opts => opts.MapFrom(dto => dto.UpdatedByUser))

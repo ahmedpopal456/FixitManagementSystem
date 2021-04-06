@@ -137,12 +137,12 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
       if (queueResponse != null)
       {
         result = FixGetResponseStatusHelper.MapResponseStatus(result, queueResponse);
-        var creationResponse = FixDocumentValidators.IsNotNullAndOperationSuccessful(queueResponse) ? await _databaseFixTable.CreateItemAsync(documentToCreate, fixCreateRequestDto.CreatedByClient.Id.ToString(), cancellationToken): default;
+        var creationResponse = FixDocumentValidators.IsNotNullAndOperationSuccessful(queueResponse) ? await _databaseFixTable.CreateItemAsync(documentToCreate, fixCreateRequestDto.CreatedByClient.Id.ToString(), cancellationToken) : default;
 
         if (creationResponse != null)
         {
           result = FixDocumentValidators.IsNotNullAndOperationSuccessful(creationResponse) ? _mapper.Map<FixDocument, FixResponseDto>(creationResponse.Document) : result;
-          result = FixGetResponseStatusHelper.MapResponseStatus(result, creationResponse); 
+          result = FixGetResponseStatusHelper.MapResponseStatus(result, creationResponse);
         }
       }
 
@@ -180,21 +180,21 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
       var (fixDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixDocument>(null, cancellationToken, fixDocument => fixDocument.id == fixId.ToString());
 
       FixDocument fixDocument = FixDocumentValidators.IsNotNullAndOperationSuccessful(fixDocumentCollection) ? fixDocumentCollection.Results.SingleOrDefault() : default;
-      
-      if(fixDocument != null)
+
+      if (fixDocument != null)
       {
         result = _mapper.Map<FixDocument, FixResponseDto>(fixDocument);
         result = FixGetResponseStatusHelper.MapResponseStatus(result, fixDocumentCollection);
       }
-      
+
       return result;
     }
-    
+
     public async Task<IEnumerable<FixResponseDto>> GetFixesByUserAsync(Guid userId, CancellationToken cancellationToken, IEnumerable<FixStatuses> fixStatuses = null)
     {
-      cancellationToken.ThrowIfCancellationRequested(); 
+      cancellationToken.ThrowIfCancellationRequested();
 
-      if(userId.Equals(Guid.Empty))
+      if (userId.Equals(Guid.Empty))
       {
         throw new ArgumentNullException(nameof(userId));
       }
@@ -210,7 +210,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
       while (currentContinuationToken != null)
       {
         var (fixDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixDocument>(string.IsNullOrWhiteSpace(currentContinuationToken) ? null : currentContinuationToken, cancellationToken, expression);
-        
+
         currentContinuationToken = continuationToken;
         if (fixDocumentCollection.IsOperationSuccessful && fixDocumentCollection.Results != null && fixDocumentCollection.Results.Any())
         {
@@ -219,7 +219,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
         }
       }
 
-      return fixResponses; 
+      return fixResponses;
     }
 
     /// <summary>
@@ -253,7 +253,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
     public async Task<FixResponseDto> UpdateFixAsync(Guid fixId, FixUpdateRequestDto fixUpdateRequestDto, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
-      var result =  new FixResponseDto();
+      var result = new FixResponseDto();
 
       var (fixDocumentCollection, continuationToken) = await _databaseFixTable.GetItemQueryableAsync<FixDocument>(null, cancellationToken, fixDocument => fixDocument.id == fixId.ToString());
       if (fixDocumentCollection != null)
@@ -266,8 +266,8 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
           fixDocument = _mapper.Map<FixUpdateRequestDto, FixDocument>(fixUpdateRequestDto, fixDocument);
           fixDocument.UpdatedTimestampUtc = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-          var operationStatus = await _databaseFixTable.UpsertItemAsync(fixDocument, fixDocument.EntityId, cancellationToken);  
-          
+          var operationStatus = await _databaseFixTable.UpsertItemAsync(fixDocument, fixDocument.EntityId, cancellationToken);
+
           result = operationStatus.IsOperationSuccessful ? _mapper.Map<FixDocument, FixResponseDto>(fixDocument) : default;
           result = result != null ? FixGetResponseStatusHelper.MapResponseStatus(result, operationStatus) : default;
         }

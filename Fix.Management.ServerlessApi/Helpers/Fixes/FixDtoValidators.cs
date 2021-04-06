@@ -8,6 +8,7 @@ using Fixit.Core.DataContracts.Fixes.Files;
 using System.Collections.Generic;
 using Fixit.Core.DataContracts.Fixes.Details;
 using Fixit.Core.DataContracts.Fixes.Tags;
+using Fixit.Core.DataContracts.Fixes.Enums;
 
 namespace Fixit.FixManagement.ServerlessApi.Helpers.Fixes
 {
@@ -117,11 +118,12 @@ namespace Fixit.FixManagement.ServerlessApi.Helpers.Fixes
       {
         var fixDeserialized = JsonConvert.DeserializeObject<FixUpdateRequestDto>(httpContent.ReadAsStringAsync().Result);
 
-        if (fixDeserialized != null &&
-          fixDeserialized.Tags != null && !IsNotValidTagsDto(fixDeserialized.Tags) &&
-          fixDeserialized.Details != null && !IsNotValidDetailsDto(fixDeserialized.Details) &&
-          fixDeserialized.Location != null && !IsNotValidLocationDto(fixDeserialized.Location) &&
-          fixDeserialized.UpdatedByUser != null && !IsNotValidUserSummaryDto(fixDeserialized.UpdatedByUser))
+        if (fixDeserialized != null
+            && fixDeserialized.Tags != null && !IsNotValidTagsDto(fixDeserialized.Tags)
+            && fixDeserialized.Details != null && !IsNotValidDetailsDto(fixDeserialized.Details)
+            && fixDeserialized.Location != null && !IsNotValidLocationDto(fixDeserialized.Location)
+            && fixDeserialized.UpdatedByUser != null && !IsNotValidUserSummaryDto(fixDeserialized.UpdatedByUser)
+            && (fixDeserialized.ClientEstimatedCost == null || fixDeserialized.Status == FixStatuses.New))
         {
           isValid = true;
           fixDto = fixDeserialized;
@@ -153,7 +155,7 @@ namespace Fixit.FixManagement.ServerlessApi.Helpers.Fixes
           !fixDeserialized.SystemCalculatedCost.Equals(null))
         {
           isValid = true;
-          fixDto = fixDeserialized;  
+          fixDto = fixDeserialized;
         }
 
       }
