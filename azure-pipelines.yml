@@ -77,7 +77,7 @@ jobs:
         echo "##vso[build.updatebuildnumber]$(majorProductVersion).$(minorProductVersion).0-$(Build.BuildId)-$(branchPatchCount)"
       name: IfBranchBuildNameAndPatch
 
-- job: Build_Chat_Management_System
+- job: Build_Fix_Management_System
   dependsOn:
     - Build_Branch_Version_Number
     - Build_PullRequest_Version_Number
@@ -232,3 +232,54 @@ jobs:
     inputs:
       PathtoPublish: '$(build.artifactstagingdirectory)'
       ArtifactName: 'drop'
+
+- job: Build_Fix_Search_Algorithm
+  dependsOn:
+    - Build_Branch_Version_Number
+    - Build_PullRequest_Version_Number
+    - Build_Development_Version_Number
+    - Build_Staging_Version_Number
+    - Build_Master_Version_Number
+  condition: or(succeeded('Build_Branch_Version_Number'), succeeded('Build_PullRequest_Version_Number'), succeeded('Build_Development_Version_Number'), succeeded('Build_Staging_Version_Number'), succeeded('Build_Master_Version_Number'))
+  variables:
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Fix.Management.Search/'
+  
+  pool:
+    vmImage: 'ubuntu-latest'
+    displayName: 'Run Build for Python Project'
+
+  steps:
+    - bash: |
+        if [ -f extensions.csproj ]
+        then
+            dotnet build extensions.csproj --runtime ubuntu.16.04-x64 --output ./bin
+        fi
+      workingDirectory: $(workingDirectory)
+      displayName: 'Build extensions'
+    - task: UsePythonVersion@0
+      displayName: 'Use Python 3.6'
+      inputs:
+        versionSpec: 3.6 # Functions V2 supports Python 3.6 as of today
+
+    - bash: |
+        python -m venv worker_venv
+        source worker_venv/bin/activate
+        python -m pip install --upgrade pip setuptools wheel
+        pip install -r requirements.txt
+      workingDirectory: $(workingDirectory)
+      displayName: 'Install application dependencies'
+      
+    - task: ArchiveFiles@2
+      displayName: 'Archive files'
+      inputs:
+        rootFolderOrFile: '$(workingDirectory)'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/$(buildConfiguration)/Fix.Management.Search.zip
+        replaceExistingArchive: true
+
+    - publish: $(Build.ArtifactStagingDirectory)/$(buildConfiguration)/Fix.Management.Search.zip
+      artifact: pythonBuildOutput
+
+  
+

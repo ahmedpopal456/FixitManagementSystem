@@ -14,6 +14,10 @@ variable "location_name" {
   type = string
 }
 
+variable "location_name_linux" {
+  type = string
+}
+
 variable "organization_name" {
   type    = string
   default = "fixit"

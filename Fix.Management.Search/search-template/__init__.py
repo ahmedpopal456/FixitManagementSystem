@@ -8,7 +8,7 @@ from mediator import fix_search_mediator as mediator
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
-    cs = os.environ['FIXIT-SQL-CS']
+    cs = os.environ['FIXIT_MDM_DB_CS']
     request_param = req.params
 
     if not request_param.get('keywords'):

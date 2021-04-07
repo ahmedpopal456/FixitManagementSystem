@@ -42,12 +42,14 @@ class TemplateSearchMatching():
 
     def tokenize_templates(self) -> None:
         """ Tokenize Fix templates and append to the DataFrame in order to use BM25."""
+
+        # Remove duplicates
+        for col in ['Tags', 'SectionField', 'Skills']:
+            self.templates[col] = self.templates[col].str.split(", ").map(set).str.join(", ")
+
         # Concatenate all description field
-        self.templates['concatTemplates'] = self.templates['TemplateName'] + " " + \
-                                            self.templates['Category'] + " " + \
-                                            self.templates['Type'] + " " + \
-                                            self.templates['Tags'] + " " + \
-                                            self.templates['Description']
+        cols = ['TemplateName', 'WorkCategory', 'FixUnit', 'Tags', 'Skills', 'Description', 'SectionField']
+        self.templates['concatTemplates'] = self.templates[cols].apply(lambda row: ' '.join(row.values.astype(str)), axis=1)
 
         for doc in nlp.pipe(self.templates['concatTemplates'].str.lower().values, disable=["tagger", "parser", "ner"]):
             token = [(ent.text) for ent in doc]
@@ -61,7 +63,8 @@ class TemplateSearchMatching():
         try:
             bm_25 = BM25Okapi(self.tok_templates)
             results = bm_25.get_scores(tok_query)
-            self.templates.insert(len(self.templates.columns),"bm25-score", results)
+            self.templates.insert(len(self.templates.columns),'bm25-score', results)
+            self.templates['bm25-score'] = self.templates['bm25-score'].abs()
         except ZeroDivisionError:
             logging.exception("Unable to apply bm25. No Fix Templates to compare to.")
             self.templates['bm25-score'] = 0
@@ -104,9 +107,10 @@ class TemplateSearchMatching():
         """
         # self.match()
 
-        # Filter out all templates that has score zero and sort values by descending
+        # Filter out all templates that has score zero and sort values by descending order
         # TODO: Sort value by 'final-score' after second layer is implemented
-        self.templates = self.templates[(self.templates != 0).all(1)].sort_values(by='bm25-score', ascending=False)
+        self.templates = self.templates[(self.templates['bm25-score'] != 0)].sort_values(by='bm25-score', ascending=False)
+        
         return self.templates
     
     def print_results(self):
@@ -118,4 +122,4 @@ class TemplateSearchMatching():
                 Returns the resulting Fix templates in json format as a string.
 
         """
-        return self.templates[["Id", "TemplateName", "Category", "Type", "Tags", "SystemCostEstimate"]].to_json(orient='records')
+        return self.templates[["Id", "TemplateName", "WorkCategory", "FixUnit", "Tags", "SystemCostEstimate"]].to_json(orient='records')

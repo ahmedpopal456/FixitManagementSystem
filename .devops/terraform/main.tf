@@ -3,6 +3,11 @@ resource "azurerm_resource_group" "main" {
   location = var.location_name
 }
 
+resource "azurerm_resource_group" "linux" {
+  name     = "${var.organization_name}-${var.environment_name}-${var.service_abbreviation}-linux"
+  location = var.location_name_linux
+}
+
 resource "azurerm_storage_account" "main" {
   name                     = "${var.organization_name}${var.environment_name}${var.service_abbreviation}"
   resource_group_name      = azurerm_resource_group.main.name
@@ -16,6 +21,14 @@ resource "azurerm_storage_account" "app" {
   name                     = "${var.organization_name}${var.environment_name}${var.service_abbreviation}${each.key}"
   resource_group_name      = azurerm_resource_group.main.name
   location                 = azurerm_resource_group.main.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_account" "search" {
+  name                     = "${var.organization_name}${var.environment_name}${var.service_abbreviation}search"
+  resource_group_name      = azurerm_resource_group.linux.name
+  location                 = azurerm_resource_group.linux.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
@@ -52,7 +65,7 @@ resource "azurerm_function_app" "main" {
   }
 
   app_settings = {
-    "AzureWebJobsStorage"             = "UseDevelopmentStorage=false",
+    "AzureWebJobsStorage"             = azurerm_storage_account.app[each.key].primary_connection_string,
     "WEBSITE_ENABLE_SYNC_UPDATE_SITE" = "true",
     "WEBSITE_RUN_FROM_PACKAGE"        = "1",
     "APPINSIGHTS_INSTRUMENTATIONKEY"  = data.azurerm_application_insights.main.instrumentation_key,
@@ -78,6 +91,45 @@ resource "azurerm_function_app" "main" {
   }
 }
 
+resource "azurerm_app_service_plan" "linux" {
+  name                = "${var.organization_name}-${var.environment_name}-${var.service_abbreviation}-service-plan-linux"
+  location            = azurerm_resource_group.linux.location
+  resource_group_name = azurerm_resource_group.linux.name
+  kind                = "FunctionApp"
+  reserved            = true
+
+  sku {
+    tier = "Dynamic"
+    size = "Y1"
+  }
+}
+
+resource "azurerm_function_app" "search" {
+  name                       = "${var.organization_name}-${var.environment_name}-${var.service_abbreviation}-search"
+  location                   = azurerm_resource_group.linux.location
+  resource_group_name        = azurerm_resource_group.linux.name
+  app_service_plan_id        = azurerm_app_service_plan.linux.id
+  storage_account_name       = azurerm_storage_account.search.name
+  storage_account_access_key = azurerm_storage_account.search.primary_access_key
+  os_type                    = "linux"
+  version                    = "~3"
+
+  site_config {
+    scm_type = "VSTSRM"
+  }
+
+  app_settings = {
+    "AzureWebJobsStorage"             = azurerm_storage_account.search.primary_connection_string,
+    "WEBSITE_ENABLE_SYNC_UPDATE_SITE" = "true",
+    "WEBSITE_RUN_FROM_PACKAGE"        = "1",
+    "APPINSIGHTS_INSTRUMENTATIONKEY"  = data.azurerm_application_insights.main.instrumentation_key,
+    "WEBSITE_NODE_DEFAULT_VERSION"    = "10.14.1"
+    "FUNCTIONS_WORKER_RUNTIME"        = "python",
+
+    "FIXIT_MDM_DB_CS" = data.azurerm_key_vault_secret.connectionstring.value
+  }
+}
+
 resource "azurerm_cosmosdb_sql_database" "main" {
   name                = var.organization_name
   resource_group_name = data.azurerm_cosmosdb_account.main.resource_group_name
@@ -92,16 +144,4 @@ resource "azurerm_cosmosdb_sql_container" "main" {
   account_name        = data.azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
   partition_key_path  = "/EntityId"
-
-  indexing_policy {
-    indexing_mode = "Consistent"
-
-    included_path {
-      path = "/*"
-    }
-
-    excluded_path {
-      path = "/\"_etag\"/?"
-    }
-  }
 }
