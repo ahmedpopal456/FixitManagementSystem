@@ -245,29 +245,23 @@ jobs:
     workingDirectory: '$(System.DefaultWorkingDirectory)/Fix.Management.Search/'
   
   pool:
-    vmImage: 'ubuntu-latest'
-    displayName: 'Run Build for Python Project'
+    vmImage: 'ubuntu-16.04'
+    displayName: 'Run Build for Python Search Algorithm'
 
   steps:
-    - bash: |
-        if [ -f extensions.csproj ]
-        then
-            dotnet build extensions.csproj --runtime ubuntu.16.04-x64 --output ./bin
-        fi
-      workingDirectory: $(workingDirectory)
-      displayName: 'Build extensions'
     - task: UsePythonVersion@0
       displayName: 'Use Python 3.6'
       inputs:
-        versionSpec: 3.6 # Functions V2 supports Python 3.6 as of today
+        versionSpec: '3.6'
+        architecture: 'x64'
 
     - bash: |
-        python -m venv worker_venv
-        source worker_venv/bin/activate
-        python -m pip install --upgrade pip setuptools wheel
-        pip install -r requirements.txt
-      workingDirectory: $(workingDirectory)
-      displayName: 'Install application dependencies'
+        if [ -f extensions.csproj ]
+        then
+            dotnet build extensions.csproj --output ./bin
+        fi
+        pip install --target="$(workingDirectory)/.python_packages/lib/site-packages" -r $(workingDirectory)/requirements.txt
+      displayName: 'Build extensions'
       
     - task: ArchiveFiles@2
       displayName: 'Archive files'
@@ -277,9 +271,11 @@ jobs:
         archiveType: zip
         archiveFile: $(Build.ArtifactStagingDirectory)/$(buildConfiguration)/Fix.Management.Search.zip
         replaceExistingArchive: true
-
-    - publish: $(Build.ArtifactStagingDirectory)/$(buildConfiguration)/Fix.Management.Search.zip
-      artifact: pythonBuildOutput
+    
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)/Fix.Management.Search.zip'
+        artifactName: 'pythonBuildOutput'
 
   
 
