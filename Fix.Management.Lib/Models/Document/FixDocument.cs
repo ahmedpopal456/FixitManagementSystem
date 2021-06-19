@@ -26,7 +26,7 @@ namespace Fix.Management.Lib.Models.Document
     public IEnumerable<TagDto> Tags { get; set; }
 
     [DataMember]
-    public IEnumerable<FixDetailsDto> Details { get; set; }
+    public FixDetailsDto Details { get; set; }
 
     [DataMember]
     public IEnumerable<FileDto> Images { get; set; }
@@ -74,15 +74,12 @@ namespace Fix.Management.Lib.Models.Document
     {
       FixDocument firstFixDocument = new FixDocument
       {
-        Details = new List<FixDetailsDto>()
+        Details = new FixDetailsDto
         {
-          new FixDetailsDto
-          {
-            Name = "Shower",
-            Description = "Need to change shower",
-            Category = "Bathroom",
-            Type = "New"
-          }
+          Name = "Shower",
+          Description = "Need to change shower",
+          Category = "Bathroom",
+          Type = "New"
         },
         Tags = new List<TagDto>()
         {

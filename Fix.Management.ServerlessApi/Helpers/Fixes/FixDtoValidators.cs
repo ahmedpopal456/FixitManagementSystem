@@ -49,18 +49,15 @@ namespace Fixit.FixManagement.ServerlessApi.Helpers.Fixes
       return false;
     }
 
-    public static bool IsNotValidDetailsDto(IEnumerable<FixDetailsDto> detailsDto)
+    public static bool IsNotValidDetailsDto(FixDetailsDto detailsDto)
     {
-      foreach (var detailsDtoMember in detailsDto)
-      {
-        if (string.IsNullOrWhiteSpace(detailsDtoMember.Name)
-          || string.IsNullOrWhiteSpace(detailsDtoMember.Description)
-          || string.IsNullOrWhiteSpace(detailsDtoMember.Category)
-          || string.IsNullOrWhiteSpace(detailsDtoMember.Type))
+        if (string.IsNullOrWhiteSpace(detailsDto.Name)
+          || string.IsNullOrWhiteSpace(detailsDto.Description)
+          || string.IsNullOrWhiteSpace(detailsDto.Category)
+          || string.IsNullOrWhiteSpace(detailsDto.Type))
         {
           return true;
         }
-      }
       return false;
     }
 

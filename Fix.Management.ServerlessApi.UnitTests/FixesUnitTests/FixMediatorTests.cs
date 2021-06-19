@@ -154,6 +154,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       var operationStatus = new OperationStatus() { IsOperationSuccessful = true };
       var queueResponse = new OperationStatus() { IsOperationSuccessful = true };
       var fixCreateRequestDto = _fakeFixCreateRequestDtos.First();
+      Console.WriteLine(fixCreateRequestDto);
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.CreateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(documentCollection);
       _queueStorageEntityMediator.Setup(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()))
@@ -321,7 +322,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       Assert.IsNotNull(actionResult);
       Assert.IsTrue(actionResult.IsOperationSuccessful);
       Assert.IsNull(actionResult.OperationException);
-      Assert.IsTrue(fixUpdateRequestDto.Details.SequenceEqual(actionResult.Details));
+      Assert.AreEqual(fixUpdateRequestDto.Details, actionResult.Details);
       Assert.IsTrue(fixUpdateRequestDto.Images.SequenceEqual(actionResult.Images));
       Assert.AreEqual(fixUpdateRequestDto.Location, actionResult.Location);
       Assert.IsTrue(fixUpdateRequestDto.Schedule.SequenceEqual(actionResult.Schedule));
