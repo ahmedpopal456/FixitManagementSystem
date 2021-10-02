@@ -29,6 +29,7 @@ namespace Fix.Management.Triggers
             databaseName: "fixit",
             collectionName: "Fixes",
             ConnectionStringSetting = "FIXIT-FMS-DB-CS",
+            LeaseCollectionPrefix = "updatetagsandlocations",
             LeaseCollectionName = "leases", CreateLeaseCollectionIfNotExists = true)]IReadOnlyList<Document> input, ILogger log, CancellationToken cancellationToken)
     {
       var documentEnumerator = input.GetEnumerator();
