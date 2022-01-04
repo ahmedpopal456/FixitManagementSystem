@@ -79,66 +79,6 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 
     #region CreateFixAsync
 
-    [TestMethod]
-    public async Task CreateFixAsync_DatabaseGetRequestException_ReturnsException()
-    {
-      // Arange
-      var cancellationToken = CancellationToken.None;
-      var documentCollection = new CreateDocumentDto<FixDocument>()
-      {
-        Document = { },
-        IsOperationSuccessful = false,
-        OperationException = new Exception()
-      };
-
-      var operationStatus = new OperationStatus() { IsOperationSuccessful = true };
-      var queueResponse = new OperationStatus() { IsOperationSuccessful = true };
-      var fixCreateRequestDto = _fakeFixCreateRequestDtos.First();
-
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.CreateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                                  .ReturnsAsync(documentCollection);
-      _queueStorageEntityMediator.Setup(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()))
-                                 .ReturnsAsync(queueResponse);
-      // Act
-      var actionResult = await _fixMediator.CreateFixAsync(fixCreateRequestDto, cancellationToken);
-
-      // Assert
-      Assert.IsNotNull(actionResult);
-      Assert.IsFalse(actionResult.IsOperationSuccessful);
-      Assert.IsNotNull(actionResult.OperationException);
-    }
-
-    [TestMethod]
-    public async Task CreateFixAsync_QueueGetRequestException_ReturnsException()
-    {
-      // Arange
-      var cancellationToken = CancellationToken.None;
-      var documentCollection = new CreateDocumentDto<FixDocument>()
-      {
-        Document = { },
-        IsOperationSuccessful = true,
-      };
-
-      var operationStatus = new OperationStatus() { IsOperationSuccessful = true };
-      var queueResponse = new OperationStatus()
-      {
-        IsOperationSuccessful = false,
-        OperationException = new Exception()
-      };
-      var fixCreateRequestDto = _fakeFixCreateRequestDtos.First();
-
-      _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.CreateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                                  .ReturnsAsync(documentCollection);
-      _queueStorageEntityMediator.Setup(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()))
-                                 .ReturnsAsync(queueResponse);
-      // Act
-      var actionResult = await _fixMediator.CreateFixAsync(fixCreateRequestDto, cancellationToken);
-
-      // Assert
-      Assert.IsNotNull(actionResult);
-      Assert.IsFalse(actionResult.IsOperationSuccessful);
-      Assert.IsNotNull(actionResult.OperationException);
-    }
 
     [TestMethod]
     public async Task CreateFixAsync_CreateRequestSuccess_ReturnsSuccess()
@@ -154,7 +94,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       var operationStatus = new OperationStatus() { IsOperationSuccessful = true };
       var queueResponse = new OperationStatus() { IsOperationSuccessful = true };
       var fixCreateRequestDto = _fakeFixCreateRequestDtos.First();
-      Console.WriteLine(fixCreateRequestDto);
+
       _databaseTableEntityMediator.Setup(databaseTableEntityMediator => databaseTableEntityMediator.CreateItemAsync(It.IsAny<FixDocument>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                                   .ReturnsAsync(documentCollection);
       _queueStorageEntityMediator.Setup(queueStorageEntityMediator => queueStorageEntityMediator.SendMessageAsync(It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()))

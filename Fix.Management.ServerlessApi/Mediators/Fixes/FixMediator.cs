@@ -131,19 +131,14 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
       documentToCreate.UpdatedTimestampUtc = currentTimestampUtc;
       documentToCreate.CreatedTimestampUtc = currentTimestampUtc;
 
-      var serializedDocument = JsonConvert.SerializeObject(documentToCreate);
-      var queueResponse = await _queueStorage.SendMessageAsync(serializedDocument);
+      var creationResponse = await _databaseFixTable.CreateItemAsync(documentToCreate, fixCreateRequestDto.CreatedByClient.Id.ToString(), cancellationToken);
 
-      if (queueResponse != null)
+      if (creationResponse != null)
       {
-        result = FixGetResponseStatusHelper.MapResponseStatus(result, queueResponse);
-        var creationResponse = FixDocumentValidators.IsNotNullAndOperationSuccessful(queueResponse) ? await _databaseFixTable.CreateItemAsync(documentToCreate, fixCreateRequestDto.CreatedByClient.Id.ToString(), cancellationToken) : default;
-
-        if (creationResponse != null)
-        {
-          result = FixDocumentValidators.IsNotNullAndOperationSuccessful(creationResponse) ? _mapper.Map<FixDocument, FixResponseDto>(creationResponse.Document) : result;
-          result = FixGetResponseStatusHelper.MapResponseStatus(result, creationResponse);
-        }
+        result = FixDocumentValidators.IsNotNullAndOperationSuccessful(creationResponse) ? _mapper.Map<FixDocument, FixResponseDto>(creationResponse.Document) : default;
+        result = FixGetResponseStatusHelper.MapResponseStatus(result, creationResponse);
+        var serializedDocument = JsonConvert.SerializeObject(documentToCreate);
+        await _queueStorage.SendMessageAsync(serializedDocument);
       }
 
       return result;

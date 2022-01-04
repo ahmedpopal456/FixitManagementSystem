@@ -120,7 +120,7 @@ namespace Fixit.FixManagement.ServerlessApi.Helpers.Fixes
             && fixDeserialized.Details != null && !IsNotValidDetailsDto(fixDeserialized.Details)
             && fixDeserialized.Location != null && !IsNotValidLocationDto(fixDeserialized.Location)
             && fixDeserialized.UpdatedByUser != null && !IsNotValidUserSummaryDto(fixDeserialized.UpdatedByUser)
-            && (fixDeserialized.ClientEstimatedCost == null || fixDeserialized.Status == FixStatuses.New))
+            && (fixDeserialized.ClientEstimatedCost == null || fixDeserialized.Status != FixStatuses.New))
         {
           isValid = true;
           fixDto = fixDeserialized;

@@ -10,7 +10,7 @@ using Fix.Management.ServerlessApi.Mediators.FixPlans;
 using Fixit.Core.DataContracts;
 using Fixit.Core.Database.DataContracts.Documents;
 using Fixit.Core.Database.Mediators;
-using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
+using Fixit.Core.DataContracts.FixPlans.Operations.Requests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

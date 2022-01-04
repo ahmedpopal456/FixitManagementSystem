@@ -9,12 +9,12 @@ using Fixit.Core.DataContracts;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts.FixPlans;
 using Fixit.Core.DataContracts.FixPlans.Enums;
-using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
 using Fixit.Core.DataContracts.FixPlans.Phases;
 using Fixit.Core.DataContracts.FixPlans.Phases.Enums;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks.Enums;
 using Microsoft.Extensions.Configuration;
+using Fixit.Core.DataContracts.FixPlans.Operations.Requests;
 
 namespace Fix.Management.ServerlessApi.Mediators.FixPlans
 {

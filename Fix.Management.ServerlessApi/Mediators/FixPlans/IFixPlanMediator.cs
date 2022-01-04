@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.FixPlans;
-using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
+using Fixit.Core.DataContracts.FixPlans.Operations.Requests;
 using Fixit.Core.DataContracts.FixPlans.Phases;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks;
 

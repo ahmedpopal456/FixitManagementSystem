@@ -7,7 +7,7 @@ using Aliencube.AzureFunctions.Extensions.OpenApi.Core.Attributes;
 using AutoMapper;
 using Fix.Management.ServerlessApi.Helpers.FixPlans;
 using Fix.Management.ServerlessApi.Mediators.FixPlans;
-using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
+using Fixit.Core.DataContracts.FixPlans.Operations.Requests;
 using Fixit.Core.DataContracts.FixPlans.Phases;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;

@@ -7,9 +7,6 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
     #region Create Fixes 
     Task CreateFixAsync_CreateRequestSuccess_ReturnsSuccess();
 
-    Task CreateFixAsync_DatabaseGetRequestException_ReturnsException();
-
-    Task CreateFixAsync_QueueGetRequestException_ReturnsException();
     #endregion
 
     #region Delete Fixes 

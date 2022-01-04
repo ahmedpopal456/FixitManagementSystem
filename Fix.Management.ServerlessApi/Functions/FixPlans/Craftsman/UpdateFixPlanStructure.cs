@@ -8,7 +8,7 @@ using AutoMapper;
 using Fix.Management.ServerlessApi.Helpers.FixPlans;
 using Fix.Management.ServerlessApi.Mediators.FixPlans;
 using Fixit.Core.DataContracts.FixPlans;
-using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
+using Fixit.Core.DataContracts.FixPlans.Operations.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using Newtonsoft.Json;
-using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
+using Fixit.Core.DataContracts.FixPlans.Operations.Requests;
 using Fixit.Core.DataContracts.FixPlans.Phases.Enums;
 using System.Linq;
 using Fixit.Core.DataContracts.FixPlans.Phases.Tasks.Enums;

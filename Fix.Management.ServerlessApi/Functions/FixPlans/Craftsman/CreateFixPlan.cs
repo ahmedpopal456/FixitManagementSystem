@@ -9,7 +9,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using AutoMapper;
 using Fix.Management.ServerlessApi.Mediators.FixPlans;
-using Fixit.Core.DataContracts.FixPlans.Operations.Requests.FixPlans;
+using Fixit.Core.DataContracts.FixPlans.Operations.Requests;
 using System.Net;
 using Aliencube.AzureFunctions.Extensions.OpenApi.Core.Attributes;
 

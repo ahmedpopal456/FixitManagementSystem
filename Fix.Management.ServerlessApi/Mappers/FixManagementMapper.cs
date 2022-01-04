@@ -57,7 +57,7 @@ namespace Fix.Management.ServerlessApi.Mappers
         .ForMember(document => document.SystemCalculatedCost, opts => opts.Ignore())
         .ForMember(document => document.CraftsmanEstimatedCost, opts => opts.Ignore())
         .ForMember(document => document.UpdatedByUser, opts => opts.MapFrom(dto => dto.UpdatedByUser))
-        .ForMember(document => document.Status, opts => opts.Ignore())
+        .ForMember(document => document.Status, opts => opts.MapFrom(dto => dto.Status))
         .ForMember(document => document.id, opts => opts.Ignore())
         .ReverseMap();
 
