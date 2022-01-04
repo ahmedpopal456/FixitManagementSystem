@@ -255,7 +255,7 @@ jobs:
     workingDirectory: '$(System.DefaultWorkingDirectory)/Fix.Management.Search/'
   
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-18.04'
     displayName: 'Run Build for Python Search Algorithm'
 
   steps:
