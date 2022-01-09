@@ -9,9 +9,9 @@ using Fix.Management.ServerlessApi.Mediators.FixPlans;
 using Fix.Management.ServerlessApi.Mediators.Fixes;
 using Fix.Management.ServerlessApi;
 using Fixit.Core.Storage;
-using Fixit.Core.Storage.Queue.Mediators;
 using Fix.Management.ServerlessApi.Mediators;
 using Fix.Management.ServerlessApi.Mediators.FixTag;
+using Fixit.Core.DataContracts.Decorators.Extensions;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace Fix.Management.ServerlessApi
@@ -38,6 +38,7 @@ namespace Fix.Management.ServerlessApi
       StorageFactory storageFactory = new StorageFactory(_configuration["FIXIT-FMS-STORAGEACCOUNT-CS"]);
       StorageFactory chatStorageFactory = new StorageFactory(_configuration["FIXIT-CMS-STORAGEACCOUNT-CS"]);
 
+      builder.Services.AddFixitCoreDecoratorServices();
       builder.Services.AddSingleton<IMapper>(mapperConfig.CreateMapper());
       builder.Services.AddSingleton<IDatabaseMediator>(factory.CreateCosmosClient());
       builder.Services.AddSingleton<IFixMediator, FixMediator>(provider =>

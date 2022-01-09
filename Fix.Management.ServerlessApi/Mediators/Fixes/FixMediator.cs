@@ -14,10 +14,10 @@ using Fixit.Core.DataContracts.Chat;
 using Fixit.Core.DataContracts.Fixes.Enums;
 using Fixit.Core.DataContracts.Fixes.Operations.Requests;
 using Fixit.Core.DataContracts.Fixes.Operations.Responses;
-using Fixit.Core.Storage.Queue.Mediators;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Fixit.Core.DataContracts.Chat.Operations.Requests;
+using Fixit.Core.Storage.Storage.Queue.Mediators;
 
 namespace Fix.Management.ServerlessApi.Mediators.Fixes
 {
