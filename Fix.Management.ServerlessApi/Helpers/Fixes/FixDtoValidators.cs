@@ -2,13 +2,13 @@
 using System.Net.Http;
 using System;
 using Fixit.Core.DataContracts.Fixes.Operations.Requests;
-using Fixit.Core.DataContracts.Fixes.Locations;
 using Fixit.Core.DataContracts.Users;
 using Fixit.Core.DataContracts.Fixes.Files;
 using System.Collections.Generic;
 using Fixit.Core.DataContracts.Fixes.Details;
 using Fixit.Core.DataContracts.Fixes.Tags;
 using Fixit.Core.DataContracts.Fixes.Enums;
+using Fixit.Core.DataContracts.Users.Address;
 
 namespace Fixit.FixManagement.ServerlessApi.Helpers.Fixes
 {
@@ -22,12 +22,9 @@ namespace Fixit.FixManagement.ServerlessApi.Helpers.Fixes
       return isValid;
     }
 
-    public static bool IsNotValidLocationDto(FixLocationDto locationDto)
+    public static bool IsNotValidLocationDto(AddressDto locationDto)
     {
-      return string.IsNullOrWhiteSpace(locationDto.Address)
-        || string.IsNullOrWhiteSpace(locationDto.City)
-        || string.IsNullOrWhiteSpace(locationDto.PostalCode)
-        || string.IsNullOrWhiteSpace(locationDto.Province);
+      return string.IsNullOrWhiteSpace(locationDto.FormattedAddress);
     }
 
     public static bool IsNotValidUserSummaryDto(UserSummaryDto userSummaryDto)

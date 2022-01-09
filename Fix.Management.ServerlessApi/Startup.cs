@@ -10,7 +10,6 @@ using Fix.Management.ServerlessApi.Mediators.Fixes;
 using Fix.Management.ServerlessApi;
 using Fixit.Core.Storage;
 using Fixit.Core.Storage.Queue.Mediators;
-using Fix.Management.ServerlessApi.Mediators.FixLocations;
 using Fix.Management.ServerlessApi.Mediators;
 using Fix.Management.ServerlessApi.Mediators.FixTag;
 
@@ -62,14 +61,6 @@ namespace Fix.Management.ServerlessApi
         return new FixPlanMediator(mapper, configuration, databaseMediator);
       });
       
-      builder.Services.AddSingleton<IFixLocationMediator, FixLocationMediator>(provider =>
-      {
-        var mapper = provider.GetService<IMapper>();
-        var databaseMediator = provider.GetService<IDatabaseMediator>();
-        var configuration = provider.GetService<IConfiguration>();
-
-        return new FixLocationMediator(mapper, configuration, databaseMediator);
-      });
 
       builder.Services.AddSingleton<IFixTagMediator, FixTagMediator>(provider =>
       {

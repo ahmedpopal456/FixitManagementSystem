@@ -6,12 +6,12 @@ using Fixit.Core.DataContracts.Fixes.Cost;
 using Fixit.Core.DataContracts.Fixes.Details;
 using Fixit.Core.DataContracts.Fixes.Enums;
 using Fixit.Core.DataContracts.Fixes.Files;
-using Fixit.Core.DataContracts.Fixes.Locations;
 using Fixit.Core.DataContracts.Fixes.Schedule;
 using Fixit.Core.DataContracts.Fixes.Tags;
 using Fixit.Core.DataContracts.FixPlans;
 using Fixit.Core.DataContracts.Seeders;
 using Fixit.Core.DataContracts.Users;
+using Fixit.Core.DataContracts.Users.Address;
 
 namespace Fix.Management.Lib.Models.Document
 {
@@ -32,7 +32,7 @@ namespace Fix.Management.Lib.Models.Document
     public IEnumerable<FileDto> Images { get; set; }
 
     [DataMember]
-    public FixLocationDto Location { get; set; }
+    public AddressDto Location { get; set; }
 
     [DataMember]
     public IEnumerable<FixScheduleRangeDto> Schedule { get; set; }
@@ -103,12 +103,8 @@ namespace Fix.Management.Lib.Models.Document
           }
 
         },
-        Location = new FixLocationDto()
+        Location = new AddressDto()
         {
-          Address = "123 Something",
-          City = "Montreal",
-          Province = "Quebec",
-          PostalCode = "H4S 202"
         },
         Schedule = new List<FixScheduleRangeDto>()
         {

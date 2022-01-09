@@ -26,20 +26,20 @@ namespace Fix.Management.ServerlessApi.Mediators.FixTag
 
       if (string.IsNullOrWhiteSpace(databaseName))
       {
-        throw new ArgumentNullException($"{nameof(FixLocationMediator)} expects the {nameof(configurationProvider)} to have defined the Fix Management Database as {{FIXIT-FMS-DB-NAME}} ");
+        throw new ArgumentNullException($"{nameof(FixTagMediator)} expects the {nameof(configurationProvider)} to have defined the Fix Management Database as {{FIXIT-FMS-DB-NAME}} ");
       }
 
       if (string.IsNullOrWhiteSpace(databaseFixTableName))
       {
-        throw new ArgumentNullException($"{nameof(FixLocationMediator)} expects the {nameof(configurationProvider)} to have defined the Fix Management Table as {{FIXIT-FMS-DB-FIXTABLE}} ");
+        throw new ArgumentNullException($"{nameof(FixTagMediator)} expects the {nameof(configurationProvider)} to have defined the Fix Management Table as {{FIXIT-FMS-DB-FIXTABLE}} ");
       }
 
       if (databaseMediator == null)
       {
-        throw new ArgumentNullException($"{nameof(FixLocationMediator)} expects a value for {nameof(databaseMediator)}... null argument was provided");
+        throw new ArgumentNullException($"{nameof(FixTagMediator)} expects a value for {nameof(databaseMediator)}... null argument was provided");
       }
 
-      _mapper = mapper ?? throw new ArgumentNullException($"{nameof(FixLocationMediator)} expects a value for {nameof(mapper)}... null argument was provided");
+      _mapper = mapper ?? throw new ArgumentNullException($"{nameof(FixTagMediator)} expects a value for {nameof(mapper)}... null argument was provided");
       _databaseFixTagTable = databaseMediator.GetDatabase(databaseName).GetContainer(databaseFixTableName);
     }
 
@@ -100,7 +100,7 @@ namespace Fix.Management.ServerlessApi.Mediators.FixTag
             {
               fixTagResults.Statistics.TotalFixesCount++;
             }
-            result = await _databaseFixTagTable.UpsertItemAsync(fixTagResults, fixDocument.EntityId, cancellationToken);
+            result = await _databaseFixTagTable.UpsertItemAsync(fixTagResults, fixDocument.EntityId, cancellationToken); 
           }
           else
           {
