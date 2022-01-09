@@ -10,10 +10,10 @@ using Fix.Management.Lib.Models.Document;
 using Fixit.Core.Database.DataContracts.Documents;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts.Fixes.Operations.Requests;
-using Fixit.Core.Storage.Queue.Mediators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Fixit.Core.DataContracts;
+using Fixit.Core.Storage.Storage.Queue.Mediators;
 
 namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 {

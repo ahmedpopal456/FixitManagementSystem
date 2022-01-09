@@ -4,7 +4,7 @@ using Fix.Management.ServerlessApi.FakeDataProviders.Adapters;
 using Fix.Management.ServerlessApi.Mappers;
 using Fixit.Core.Database.Mediators;
 using Fixit.Core.DataContracts.Seeders;
-using Fixit.Core.Storage.Queue.Mediators;
+using Fixit.Core.Storage.Storage.Queue.Mediators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
