@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Fixit.Core.Database;
+using Fixit.Core.DataContracts;
 using Fixit.Core.DataContracts.Fixes.Tags;
 using Fixit.Core.DataContracts.Seeders;
 

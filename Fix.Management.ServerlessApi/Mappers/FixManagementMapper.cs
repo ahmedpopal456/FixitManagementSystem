@@ -6,6 +6,9 @@ using Fixit.Core.DataContracts.Chat;
 using System.Collections.Generic;
 using Fixit.Core.DataContracts.Users;
 using Fixit.Core.DataContracts.Fixes.Enums;
+using Fixit.Core.DataContracts.Chat.Operations.Requests;
+using Fixit.Core.DataContracts.Chat.Details;
+using Fixit.Core.DataContracts.Chat.Enums;
 
 namespace Fix.Management.ServerlessApi.Mappers
 {
@@ -82,7 +85,7 @@ namespace Fix.Management.ServerlessApi.Mappers
 
       // Conversation Create Request
       CreateMap<FixResponseDto, ConversationCreateRequestDto>()
-        .ForMember(request => request.FixInstanceId, opts => opts.MapFrom(fix => fix.Id))
+        .ForMember(request => request.Details, opts => opts.MapFrom(fix => fix != null && fix.Details != null ? new ContextDetails() { Id = fix.Id.ToString(), Name = fix.Details.Name, Type = ChatEntityTypes.Fixes } : null))
         .ForMember(request => request.Participants, opts => opts.MapFrom(fix => new List<UserSummaryDto>() { fix.CreatedByClient, fix.AssignedToCraftsman }));
     }
   }

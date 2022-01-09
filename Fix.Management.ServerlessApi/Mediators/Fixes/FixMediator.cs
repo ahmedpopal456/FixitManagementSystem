@@ -17,6 +17,7 @@ using Fixit.Core.DataContracts.Fixes.Operations.Responses;
 using Fixit.Core.Storage.Queue.Mediators;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Fixit.Core.DataContracts.Chat.Operations.Requests;
 
 namespace Fix.Management.ServerlessApi.Mediators.Fixes
 {
