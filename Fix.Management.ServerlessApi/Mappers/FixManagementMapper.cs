@@ -2,7 +2,6 @@
 using Fixit.Core.DataContracts.Fixes.Operations.Requests;
 using Fixit.Core.DataContracts.Fixes.Operations.Responses;
 using Fix.Management.Lib.Models.Document;
-using Fixit.Core.DataContracts.Chat;
 using System.Collections.Generic;
 using Fixit.Core.DataContracts.Users;
 using Fixit.Core.DataContracts.Fixes.Enums;
@@ -45,7 +44,7 @@ namespace Fix.Management.ServerlessApi.Mappers
         .ForMember(document => document.CreatedByClient, opts => opts.MapFrom(dto => dto.CreatedByClient))
         .ForMember(document => document.UpdatedByUser, opts => opts.MapFrom(dto => dto.UpdatedByUser))
         .ForMember(document => document.Status, opts => opts.MapFrom(dto => dto.Status))
-        .ForMember(document => document.id, opts => opts.Ignore())
+        .ForMember(document => document.id, opts => opts.MapFrom(dto => dto.Id))
         .ReverseMap();
 
       // Update Fixes Request

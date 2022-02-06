@@ -125,17 +125,17 @@ jobs:
       nugetConfigPath: 'nuget.config'
 
   # Prepare Sonar Cloud Analysis
-  - task: SonarCloudPrepare@1
-    inputs:
-      SonarCloud: 'fixit-sonarcloud'
-      organization: 'fixit'
-      scannerMode: 'MSBuild'
-      projectKey: 'fixit-app_FixitManagementSystem'
-      projectName: 'FixitManagementSystem'
-      extraProperties: |
-        sonar.exclusions=**/obj/**,**/*.dll
-        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
-        sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+  # - task: SonarCloudPrepare@1
+  #   inputs:
+  #     SonarCloud: 'fixit-sonarcloud'
+  #     organization: 'fixit'
+  #     scannerMode: 'MSBuild'
+  #     projectKey: 'fixit-app_FixitManagementSystem'
+  #     projectName: 'FixitManagementSystem'
+  #     extraProperties: |
+  #       sonar.exclusions=**/obj/**,**/*.dll
+  #       sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+  #       sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
 
   # Build
   - task: DotNetCoreCLI@2
@@ -167,12 +167,12 @@ jobs:
       reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
 
   # Run Sonar Cloud Analysis
-  - task: SonarCloudAnalyze@1
+  # - task: SonarCloudAnalyze@1
 
   # Publish Sonar Cloud Report
-  - task: SonarCloudPublish@1
-    inputs:
-      pollingTimeoutSec: '300'
+  # - task: SonarCloudPublish@1
+  #   inputs:
+  #     pollingTimeoutSec: '300'
 
   # Pack
   - task: DotNetCoreCLI@2
