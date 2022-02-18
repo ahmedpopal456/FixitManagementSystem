@@ -9,16 +9,16 @@ namespace Fix.Management.ServerlessApi.Helpers.Fixes
   {
     public static FixResponseDto MapResponseStatus(FixResponseDto result, CreateDocumentDto<FixDocument> response)
     {
-      result.OperationException = response.OperationException;
+      result.OperationException = response.OperationException ?? null;
       result.OperationMessage = response.OperationMessage;
       result.IsOperationSuccessful = response.IsOperationSuccessful;
 
       return result;
     }
-   
+
     public static FixCostResponseDto MapResponseStatus(FixCostResponseDto result, DocumentCollectionDto<FixDocument> response)
     {
-      result.OperationException = response.OperationException;
+      result.OperationException = response.OperationException ?? null;
       result.OperationMessage = response.OperationMessage;
       result.IsOperationSuccessful = response.IsOperationSuccessful;
 
