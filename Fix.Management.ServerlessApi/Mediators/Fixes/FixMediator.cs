@@ -136,7 +136,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
 
       if (creationResponse != null)
       {
-        result = FixDocumentValidators.IsNotNullAndOperationSuccessful(creationResponse) ? _mapper.Map<FixDocument, FixResponseDto>(creationResponse.Document) : default;
+        result = FixDocumentValidators.IsNotNullAndOperationSuccessful(creationResponse) ? _mapper.Map<FixDocument, FixResponseDto>(creationResponse.Document) : new FixResponseDto();
         result = FixGetResponseStatusHelper.MapResponseStatus(result, creationResponse);
         var serializedDocument = JsonConvert.SerializeObject(documentToCreate);
         await _queueStorage.SendMessageAsync(serializedDocument);

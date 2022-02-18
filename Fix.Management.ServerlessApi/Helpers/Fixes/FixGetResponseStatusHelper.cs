@@ -9,7 +9,7 @@ namespace Fix.Management.ServerlessApi.Helpers.Fixes
   {
     public static FixResponseDto MapResponseStatus(FixResponseDto result, CreateDocumentDto<FixDocument> response)
     {
-      result.OperationException = response.OperationException ?? null;
+      result.OperationException = response.OperationException;
       result.OperationMessage = response.OperationMessage;
       result.IsOperationSuccessful = response.IsOperationSuccessful;
 
@@ -18,7 +18,7 @@ namespace Fix.Management.ServerlessApi.Helpers.Fixes
 
     public static FixCostResponseDto MapResponseStatus(FixCostResponseDto result, DocumentCollectionDto<FixDocument> response)
     {
-      result.OperationException = response.OperationException ?? null;
+      result.OperationException = response.OperationException;
       result.OperationMessage = response.OperationMessage;
       result.IsOperationSuccessful = response.IsOperationSuccessful;
 
