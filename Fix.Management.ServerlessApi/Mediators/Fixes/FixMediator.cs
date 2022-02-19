@@ -297,12 +297,9 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
           var conversationCreateRequestDto = _mapper.Map<FixResponseDto, ConversationCreateRequestDto>(result);
 
           string requestJson = JsonConvert.SerializeObject(conversationCreateRequestDto);
-          string base64EncodedRequest = Convert.ToBase64String(Encoding.UTF8.GetBytes(requestJson));
-
-          await _chatQueueStorage.SendMessageAsync(base64EncodedRequest, null, null, cancellationToken);
+          await _chatQueueStorage.SendMessageAsync(requestJson, null, null, cancellationToken);
         }
       }
-
 
       return result;
     }
