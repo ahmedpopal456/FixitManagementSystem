@@ -15,7 +15,7 @@ namespace Fix.Management.ServerlessApi.Helpers.Fixes
 
       return result;
     }
-   
+
     public static FixCostResponseDto MapResponseStatus(FixCostResponseDto result, DocumentCollectionDto<FixDocument> response)
     {
       result.OperationException = response.OperationException;

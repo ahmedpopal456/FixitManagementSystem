@@ -79,6 +79,7 @@ namespace Fixit.FixManagement.ServerlessApi.Helpers.Fixes
 
       try
       {
+        Console.WriteLine(httpContent.ReadAsStringAsync().Result);
         var fixDeserialized = JsonConvert.DeserializeObject<FixCreateRequestDto>(httpContent.ReadAsStringAsync().Result);
 
         if (fixDeserialized != null &&
