@@ -39,6 +39,9 @@ namespace Fix.Management.Lib.Models.Document
     public IEnumerable<FixScheduleRangeDto> Schedule { get; set; }
 
     [DataMember]
+    public IEnumerable<LicenseDto> Licenses { get; set; }
+
+    [DataMember]
     public FixCostRangeDto ClientEstimatedCost { get; set; }
 
     [DataMember]

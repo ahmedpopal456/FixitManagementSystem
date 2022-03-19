@@ -51,8 +51,6 @@ namespace Fix.Management.ServerlessApi.Functions.Fixes
         return new NotFoundObjectResult($"A fix was not able to be created..");
       }
       return new OkObjectResult(result);
-
     }
-
   }
 }
