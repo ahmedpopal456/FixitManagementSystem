@@ -10,6 +10,7 @@ using Fixit.Core.DataContracts.Fixes.Files;
 using Fixit.Core.DataContracts.Fixes.Schedule;
 using Fixit.Core.DataContracts.Fixes.Tags;
 using Fixit.Core.DataContracts.FixPlans;
+using Fixit.Core.DataContracts.FixTemplates;
 using Fixit.Core.DataContracts.Seeders;
 using Fixit.Core.DataContracts.Users;
 using Fixit.Core.DataContracts.Users.Address;
