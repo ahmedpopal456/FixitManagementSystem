@@ -44,11 +44,11 @@ class TemplateSearchMatching():
         """ Tokenize Fix templates and append to the DataFrame in order to use BM25."""
 
         # Remove duplicates
-        for col in ['Tags', 'SectionField', 'Skills']:
+        for col in ['Tags']:
             self.templates[col] = self.templates[col].str.split(", ").map(set).str.join(", ")
 
         # Concatenate all description field
-        cols = ['TemplateName', 'WorkCategory', 'FixUnit', 'Tags', 'Skills', 'Description', 'SectionField']
+        cols = ['TemplateName', 'WorkCategory', 'FixUnit', 'Tags', 'Description']
         self.templates['concatTemplates'] = self.templates[cols].apply(lambda row: ' '.join(row.values.astype(str)), axis=1)
 
         for doc in nlp.pipe(self.templates['concatTemplates'].str.lower().values, disable=["tagger", "parser", "ner"]):
