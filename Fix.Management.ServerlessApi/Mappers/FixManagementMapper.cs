@@ -73,9 +73,7 @@ namespace Fix.Management.ServerlessApi.Mappers
         .ForMember(document => document.SystemCalculatedCost, opts => opts.MapFrom(dto => dto.SystemCalculatedCost))
         .ForMember(document => document.CraftsmanEstimatedCost, opts => opts.MapFrom(dto => dto.CraftsmanEstimatedCost))
         .ForMember(document => document.UpdatedByUser, opts => opts.MapFrom(dto => dto.UpdatedByUser))
-        .ForMember(document => document.Status, opts => opts.Ignore())
-        .ForMember(document => document.id, opts => opts.Ignore())
-        .ReverseMap();
+        .ForAllOtherMembers(opts => opts.Ignore());
 
       // Get Fix Cost Response
       CreateMap<FixDocument, FixCostResponseDto>()
