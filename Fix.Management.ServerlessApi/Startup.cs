@@ -12,6 +12,8 @@ using Fixit.Core.Storage;
 using Fix.Management.ServerlessApi.Mediators;
 using Fix.Management.ServerlessApi.Mediators.FixTag;
 using Fixit.Core.DataContracts.Decorators.Extensions;
+using Fixit.Core.Networking.Extensions;
+using Fixit.Core.Networking.Local.NMS;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace Fix.Management.ServerlessApi
@@ -38,6 +40,7 @@ namespace Fix.Management.ServerlessApi
       StorageFactory storageFactory = new StorageFactory(_configuration["FIXIT-FMS-STORAGEACCOUNT-CS"]);
       StorageFactory chatStorageFactory = new StorageFactory(_configuration["FIXIT-CMS-STORAGEACCOUNT-CS"]);
 
+      builder.Services.AddNmsServices("https://fixit-dev-nms-api.azurewebsites.net/");
       builder.Services.AddFixitCoreDecoratorServices();
       builder.Services.AddSingleton<IMapper>(mapperConfig.CreateMapper());
       builder.Services.AddSingleton<IDatabaseMediator>(factory.CreateCosmosClient());
@@ -46,10 +49,12 @@ namespace Fix.Management.ServerlessApi
         var mapper = provider.GetService<IMapper>();
         var databaseMediator = provider.GetService<IDatabaseMediator>();
         var configuration = provider.GetService<IConfiguration>();
+        var fixNmsHttpClient = provider.GetService<IFixNmsHttpClient>();
+
         var queueMediator = storageFactory.CreateQueueServiceClientMediator();
         var chatQueueMediator = chatStorageFactory.CreateQueueServiceClientMediator();
 
-        return new FixMediator(mapper, configuration, queueMediator, chatQueueMediator, databaseMediator);
+        return new FixMediator(mapper, configuration, queueMediator, chatQueueMediator, databaseMediator, fixNmsHttpClient);
       });
 
 

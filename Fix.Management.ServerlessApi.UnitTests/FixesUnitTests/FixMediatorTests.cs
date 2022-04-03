@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Fixit.Core.DataContracts;
 using Fixit.Core.Storage.Storage.Queue.Mediators;
+using Fixit.Core.Networking.Local.NMS;
 
 namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
 {
@@ -48,6 +49,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
       _queueStorageEntityMediator = new Mock<IQueueClientMediator>();
       _chatQueueStorageMediator = new Mock<IQueueServiceClientMediator>();
       _chatQueueStorageEntityMediator = new Mock<IQueueClientMediator>();
+      var _fixNmsHttpClient = new Mock<IFixNmsHttpClient>();
 
       // Create fake data objects
       _fakeFixDocuments = _fakeDtoSeedFactory.CreateSeederFactory<FixDocument>(new FixDocument());
@@ -69,6 +71,7 @@ namespace Fix.Management.ServerlessApi.UnitTests.FixesUnitTests
                                      _queueStorageMediator.Object,
                                      _chatQueueStorageMediator.Object,
                                      _databaseMediator.Object,
+                                     _fixNmsHttpClient.Object,
                                      _fixDatabasebName,
                                      _fixDataTableName,
                                      _fixQueueStorageName,

@@ -18,6 +18,11 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Fixit.Core.DataContracts.Chat.Operations.Requests;
 using Fixit.Core.Storage.Storage.Queue.Mediators;
+using Fixit.Core.Networking.Local.NMS;
+using Fixit.Core.DataContracts.Notifications.Operations;
+using Fixit.Core.DataContracts.Notifications.Payloads;
+using Fixit.Core.DataContracts.Notifications.Enums;
+using Fixit.Core.DataContracts.Users;
 
 namespace Fix.Management.ServerlessApi.Mediators.Fixes
 {
@@ -27,12 +32,14 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
     private readonly IDatabaseTableEntityMediator _databaseFixTable;
     private readonly IQueueClientMediator _queueStorage;
     private readonly IQueueClientMediator _chatQueueStorage;
+    protected readonly IFixNmsHttpClient _fixNmsHttpClient;
 
     public FixMediator(IMapper mapper,
                        IConfiguration configurationProvider,
                        IQueueServiceClientMediator queueStorageMediator,
                        IQueueServiceClientMediator chatQueueStorageMediator,
-                       IDatabaseMediator databaseMediator)
+                       IDatabaseMediator databaseMediator,
+                       IFixNmsHttpClient fixNmsHttpClient)
     {
       var databaseName = configurationProvider["FIXIT-FMS-DB-NAME"];
       var databaseFixTableName = configurationProvider["FIXIT-FMS-DB-FIXTABLE"];
@@ -68,7 +75,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
       {
         throw new ArgumentNullException($"{nameof(FixMediator)} expects a value for {nameof(queueStorageMediator)}... null argument was provided");
       }
-
+      _fixNmsHttpClient = fixNmsHttpClient ?? throw new ArgumentNullException($"{nameof(FixMediator)} expects a value for {nameof(fixNmsHttpClient)}... Null argument was provided");
       _mapper = mapper ?? throw new ArgumentNullException($"{nameof(FixMediator)} expects a value for {nameof(mapper)}... null argument was provided");
       _databaseFixTable = databaseMediator.GetDatabase(databaseName).GetContainer(databaseFixTableName);
       _queueStorage = queueStorageMediator.GetQueueClient(queueName);
@@ -79,6 +86,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
                        IQueueServiceClientMediator queueStorageMediator,
                        IQueueServiceClientMediator chatQueueStorageMediator,
                        IDatabaseMediator databaseMediator,
+                       IFixNmsHttpClient fixNmsHttpClient,
                        string databaseName,
                        string databaseFixTableName,
                        string queueName,
@@ -114,7 +122,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
       {
         throw new ArgumentNullException($"{nameof(FixMediator)} expects a value for {nameof(queueStorageMediator)}... null argument was provided");
       }
-
+      _fixNmsHttpClient = fixNmsHttpClient ?? throw new ArgumentNullException($"{nameof(FixMediator)} expects a value for {nameof(fixNmsHttpClient)}... Null argument was provided");
       _mapper = mapper ?? throw new ArgumentNullException($"{nameof(FixMediator)} expects a value for {nameof(mapper)}... null argument was provided");
       _databaseFixTable = databaseMediator.GetDatabase(databaseName).GetContainer(databaseFixTableName);
       _queueStorage = queueStorageMediator.GetQueueClient(queueName);
@@ -298,6 +306,27 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
 
           string requestJson = JsonConvert.SerializeObject(conversationCreateRequestDto);
           await _chatQueueStorage.SendMessageAsync(requestJson, null, null, cancellationToken);
+
+          var acceptedFixNotification = new EnqueueNotificationRequestDto
+          {
+            Title = $"Client Accepted Your Offer!",
+            Message = $"{fixDocument?.CreatedByClient?.FirstName} {fixDocument?.CreatedByClient?.LastName}",
+            Payload = new NotificationPayloadDto()
+            {
+              Action = NotificationTypes.FixAccepted,
+              SystemPayload = null
+            },
+            IsTransient = false,
+            RecipientUsers = new List<UserBaseDto>() { new UserBaseDto() {
+              FirstName = fixDocument?.CreatedByClient?.FirstName,
+              Id = Guid.TryParse(fixDocument?.id, out Guid guid)? guid: Guid.Empty, 
+              LastName = fixDocument?.CreatedByClient?.LastName,
+              UserPrincipalName = fixDocument?.CreatedByClient?.UserPrincipalName
+            } }
+
+          };
+
+          await _fixNmsHttpClient?.PostNotification(acceptedFixNotification, cancellationToken);
         }
       }
 
