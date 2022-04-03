@@ -310,7 +310,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
           var acceptedFixNotification = new EnqueueNotificationRequestDto
           {
             Title = $"Client Accepted Your Offer!",
-            Message = $"{fixDocument?.CreatedByClient?.FirstName} {fixDocument?.CreatedByClient?.LastName}",
+            Message = $"Move the fix from Pending to In Progress to let {fixDocument?.CreatedByClient?.FirstName} {fixDocument?.CreatedByClient?.LastName} know you are ready!",
             Payload = new NotificationPayloadDto()
             {
               Action = NotificationTypes.FixAccepted,
@@ -323,7 +323,6 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
               LastName = fixDocument?.AssignedToCraftsman?.LastName,
               UserPrincipalName = fixDocument?.AssignedToCraftsman?.UserPrincipalName
             } }
-
           };
 
           await _fixNmsHttpClient?.PostNotification(acceptedFixNotification, cancellationToken);
