@@ -314,7 +314,7 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
             Payload = new NotificationPayloadDto()
             {
               Action = NotificationTypes.FixAccepted,
-              SystemPayload = null
+              SystemPayload = new object()
             },
             IsTransient = false,
             RecipientUsers = new List<UserBaseDto>() { new UserBaseDto() {
