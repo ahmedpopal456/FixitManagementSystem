@@ -318,10 +318,10 @@ namespace Fix.Management.ServerlessApi.Mediators.Fixes
             },
             IsTransient = false,
             RecipientUsers = new List<UserBaseDto>() { new UserBaseDto() {
-              FirstName = fixDocument?.CreatedByClient?.FirstName,
-              Id = Guid.TryParse(fixDocument?.id, out Guid guid)? guid: Guid.Empty, 
-              LastName = fixDocument?.CreatedByClient?.LastName,
-              UserPrincipalName = fixDocument?.CreatedByClient?.UserPrincipalName
+              FirstName = fixDocument?.AssignedToCraftsman?.FirstName,
+              Id = fixDocument.AssignedToCraftsman.Id, 
+              LastName = fixDocument?.AssignedToCraftsman?.LastName,
+              UserPrincipalName = fixDocument?.AssignedToCraftsman?.UserPrincipalName
             } }
 
           };
